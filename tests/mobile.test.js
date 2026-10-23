@@ -93,7 +93,7 @@ test('borough shortcuts update the shared canvas model and new headline updates 
   const headline=document.getElementById('headlineInput');
   headline.value='A new Brooklyn headline';
   headline.dispatchEvent(new window.Event('input',{bubbles:true}));
-  assert.equal(document.getElementById('tonyMobileHeadlineCount').textContent,headline.value.length+' karakter');
+  assert.equal(document.getElementById('tonyMobileHeadlineCount').textContent,headline.value.length+' characters');
   dom.window.close();
 });
 test('brand options start collapsed but can expand without removing existing controls',()=>{
