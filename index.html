@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TONY. Hızlı Haber & Yayın Oluşturucu Stüdyo</title>
+  <title>TONY. | NYC Newsroom Studio</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,7 +73,7 @@
 
       <!-- Sağ: Hızlı Şablon Modu & Aksiyonlar -->
       <div class="flex items-center gap-2">
-        <button id="btnPresetTR" type="button" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#FFC300] text-black hover:bg-[#ffd033] transition">
+        <button id="btnPresetTR" type="button" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#FFC300] text-black hover:bg-[#ffd033] transition">
           TR Örnek Haber
         </button>
         <button id="btnPresetEN" type="button" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-200 hover:bg-zinc-700 border border-white/10 transition">
@@ -1073,7 +1073,7 @@
       document.getElementById('btnCopyCaption').addEventListener('click', copyCaptionToClipboard);
       document.getElementById('btnResetFeed').addEventListener('click', () => {
         seedInitialFeed();
-        showToast('Örnek yayın akışı yenilendi');
+        showToast('Yerel taslak akışı temizlendi');
       });
 
       // Rehber Modal
@@ -1174,7 +1174,7 @@
     // --- SOSYAL MEDYA METNİ KOPYALAMA ---
     function copyCaptionToClipboard() {
       const dt = formatDateTimeDisplay();
-      const caption = `🚨 [${state.badgeText}] ${state.headline}\n\n${state.summary}\n\n📍 ${state.region} | 🗓️ ${dt}`;
+      const caption = `🚨 [${state.badgeText}] ${state.headline}\n\n${state.summary}\n\n📍 ${state.region} | 🗓️ ${dt}${state.sourceUrl ? '\n\nSource: ' + state.sourceUrl : ''}`;
       const ta = document.createElement('textarea');
       ta.value = caption;
       document.body.appendChild(ta);
@@ -1203,9 +1203,15 @@
         timeValue: state.timeValue,
         dateLang: state.dateLang,
         previewUrl: snapshot,
-        imageRef: state.activeImage
+        imageRef: state.activeImage,
+        sourceUrl: state.sourceUrl || '',
+        sourceName: state.sourceName || '',
+        verificationStatus: state.verificationStatus || 'needs-review',
+        imagePermission: state.imagePermission || 'unknown',
+        imageCredit: state.imageCredit || ''
       };
       state.feedPosts.unshift(postObj);
+      if (window.TONYNewsroom) window.TONYNewsroom.captureFeedPreview();
       renderFeedGrid();
       showToast('Haber yayın akışına eklendi');
     }
@@ -1260,6 +1266,7 @@
         delBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           state.feedPosts = state.feedPosts.filter((p) => p.id !== post.id);
+          if (window.TONYNewsroom) window.TONYNewsroom.persistFeed();
           renderFeedGrid();
           showToast('Gönderi akıştan kaldırıldı');
         });
@@ -1285,6 +1292,12 @@
       state.timeValue = post.timeValue;
       state.dateLang = post.dateLang || 'TR';
       if (post.imageRef) state.activeImage = post.imageRef;
+      state.sourceUrl = post.sourceUrl || '';
+      state.sourceName = post.sourceName || '';
+      state.verificationStatus = post.verificationStatus || 'needs-review';
+      state.imagePermission = post.imagePermission || 'unknown';
+      state.imageCredit = post.imageCredit || '';
+      if (window.TONYNewsroom) window.TONYNewsroom.setEditorial(post);
 
       badgeTextInput.value = state.badgeText;
       headlineInput.value = state.headline;
@@ -1299,84 +1312,26 @@
 
     // --- BAŞLANGIÇ ÖRNEK AKIŞI ---
     function seedInitialFeed() {
-      const savedState = { ...state };
-      const samples = [
-        {
-          badgeText: 'SON DAKİKA',
-          badgeColor: '#E11D2E',
-          headline: 'Metro Hatlarında Sabah Saatlerinde Sinyalizasyon Gecikmesi',
-          summary: 'Ana aktarma istasyonlarında yaşanan sinyal arızası nedeniyle sabah seferlerinde 15 dakikaya varan gecikmeler yaşanıyor.',
-          region: 'İSTANBUL',
-          dateValue: '2026-10-23',
-          timeValue: '13:35',
-          dateLang: 'TR',
-          img: preloadMetroImg
-        },
-        {
-          badgeText: 'ŞEHİR YAŞAMI',
-          badgeColor: '#FFC300',
-          headline: 'Sonbaharda Şehirde Görülecek En Güzel Noktalar',
-          summary: 'Merkez parklardan tarihi sokaklara kadar bu hafta sonu sonbahar renklerini izleyebileceğiniz en iyi rotalar.',
-          region: 'İSTANBUL',
-          dateValue: '2026-10-22',
-          timeValue: '18:20',
-          dateLang: 'TR',
-          img: preloadSkylineImg
-        },
-        {
-          badgeText: 'BREAKING',
-          badgeColor: '#E11D2E',
-          headline: 'Major Subway Delays Across NYC',
-          summary: 'MTA reports signal issues affecting multiple lines during morning rush hour.',
-          region: 'MANHATTAN',
-          dateValue: '2026-10-22',
-          timeValue: '09:15',
-          dateLang: 'EN',
-          img: preloadMetroImg
-        }
-      ];
-
       state.feedPosts = [];
-      samples.forEach((s, idx) => {
-        state.badgeText = s.badgeText;
-        state.badgeColor = s.badgeColor;
-        state.headline = s.headline;
-        state.summary = s.summary;
-        state.region = s.region;
-        state.dateValue = s.dateValue;
-        state.timeValue = s.timeValue;
-        state.dateLang = s.dateLang;
-        state.activeImage = s.img;
-        renderCanvas();
-        state.feedPosts.push({
-          id: 'seed_' + idx,
-          badgeText: s.badgeText,
-          badgeColor: s.badgeColor,
-          headline: s.headline,
-          summary: s.summary,
-          region: s.region,
-          dateValue: s.dateValue,
-          timeValue: s.timeValue,
-          dateLang: s.dateLang,
-          previewUrl: canvas.toDataURL('image/jpeg', 0.85),
-          imageRef: s.img
-        });
-      });
-
-      // İlk haberi geri yükle
-      Object.assign(state, savedState);
-      state.activeImage = preloadMetroImg;
-      renderCanvas();
       renderFeedGrid();
+      if (window.TONYNewsroom) window.TONYNewsroom.persistFeed();
     }
 
     // --- BAŞLATMA ---
     function initApp() {
       bindControls();
+      let didStart = false;
       const startWhenReady = () => {
+        if (didStart) return;
+        didStart = true;
         state.activeImage = preloadMetroImg;
-        renderCanvas();
-        seedInitialFeed();
+        if (window.TONYNewsroom) {
+          window.TONYNewsroom.setDefaults();
+          window.TONYNewsroom.restoreFeed();
+        } else {
+          renderCanvas();
+        }
+        renderFeedGrid();
       };
       if (preloadMetroImg.complete && preloadSkylineImg.complete) {
         startWhenReady();
@@ -1392,7 +1347,9 @@
       }
     }
 
+    window.TONYStudio = { state, canvas, dateInput, timeInput, applyPreset, renderCanvas, renderFeedGrid, showToast };
     window.addEventListener('DOMContentLoaded', initApp);
   </script>
+  <script src="/assets/newsroom.js" defer></script>
 </body>
 </html>
