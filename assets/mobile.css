@@ -156,6 +156,24 @@
   #tonyMobileFeedPanel > div:first-child { margin-bottom: 12px; }
   #tonyMobileFeedPanel #btnResetFeed { padding: 5px; }
   #tonyMobileFeedPanel .group.relative { min-width: 0; }
+  /* The original feed card actions were hover-only; make them usable by touch. */
+  #tonyMobileFeedPanel .group.relative .absolute.inset-0 {
+    opacity: 1 !important;
+    background: linear-gradient(180deg, transparent 25%, rgba(0,0,0,.9) 100%);
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: space-around !important;
+    gap: 3px !important;
+    padding: 5px !important;
+  }
+  #tonyMobileFeedPanel .group.relative .absolute.inset-0 button {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 36px;
+    font-size: 10px !important;
+    padding: 5px 2px !important;
+    white-space: nowrap;
+  }
 
   .tony-mobile-publish-summary { overflow: hidden; }
   .tony-mobile-summary-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding-bottom: 11px; margin-bottom: 11px; border-bottom: 1px solid #29292f; }
@@ -189,6 +207,9 @@
   #refModal > div { max-height: calc(100dvh - 40px); overflow-y: auto; }
   #toastBox { z-index: 60; }
 
+  @media (max-height: 600px) {
+    .tony-mobile-navigation { position: relative; top: auto; }
+  }
   @media (max-width: 370px) {
     .tony-mobile-actions button { padding-left: 10px; padding-right: 10px; font-size: 12px; }
     .tony-mobile-secondary { font-size: 11px !important; }
