@@ -1,6 +1,6 @@
 'use strict';
 const crypto=require('node:crypto');
-const lib=require('./_lib');
+const lib=require('../../lib/instagram');
 const BYTES_MAX=3000000;
 const PENDING_MS=20*60*1000;
 
