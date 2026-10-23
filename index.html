@@ -492,7 +492,7 @@
         const day = parseInt(parts[2], 10);
         dateStr = `${MONTHS_EN[monthIdx]} ${day}, ${year}`;
       }
-      if (state.showTime && /^\\d{2}:\\d{2}$/.test(state.timeValue || '')) {
+      if (state.showTime && /^\d{2}:\d{2}$/.test(state.timeValue || '')) {
         const [h, m] = state.timeValue.split(':').map(Number);
         if (h <= 23 && m <= 59) {
           const clock = `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`;
@@ -1014,8 +1014,8 @@
         applyPreset({
           badgeText: 'BREAKING',
           badgeColor: '#E11D2E',
-          headline: 'Major Subway Delays Across NYC',
-          summary: 'MTA reports signal issues affecting multiple lines during morning rush hour.',
+          headline: '[DEMO] Example NYC subway service advisory',
+          summary: 'Illustrative template content — replace with a verified report before publishing.',
           region: 'MANHATTAN',
           dateLang: 'EN',
           img: preloadMetroImg
@@ -1087,7 +1087,7 @@
       state.headline = preset.headline;
       state.summary = preset.summary;
       state.region = preset.region;
-      state.dateLang = preset.dateLang;
+      state.dateLang = 'EN';
       if (preset.img) state.activeImage = preset.img;
 
       badgeTextInput.value = state.badgeText;
