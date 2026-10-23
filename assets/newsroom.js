@@ -38,42 +38,42 @@
     panel.innerHTML =
       '<div class="flex gap-2 items-center mb-2">' +
       '<span class="text-xs font-black rounded-md px-2 py-1 bg-[#FFC300] text-black">NYC</span>' +
-      '<h2 class="font-bold text-sm uppercase tracking-wide text-white">Haber URL’sinden Taslak Oluştur</h2></div>' +
-      '<p class="text-[11px] text-zinc-400 mb-3">Kaynak linkini ekle: başlık, açıklama, borough ve kategori taslağı getirilsin. Yayın öncesi her bilgi editörce doğrulanmalıdır.</p>' +
-      '<label for="tonyArticleUrl" class="block text-xs font-semibold text-zinc-300 mb-1">Haber bağlantısı (HTTPS)</label>' +
+      '<h2 class="font-bold text-sm uppercase tracking-wide text-white">Create a Draft from a News URL</h2></div>' +
+      '<p class="text-[11px] text-zinc-400 mb-3">Paste a source link to prefill the headline, description, borough and category. Verify all details before publishing.</p>' +
+      '<label for="tonyArticleUrl" class="block text-xs font-semibold text-zinc-300 mb-1">Article URL (HTTPS)</label>' +
       '<div class="flex flex-col sm:flex-row gap-2">' +
       '<input id="tonyArticleUrl" type="url" inputmode="url" placeholder="https://gothamist.com/news/..." class="min-w-0 flex-1 bg-zinc-900 border border-white/15 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#FFC300]" />' +
-      '<button type="button" id="tonyFetchArticle" class="px-4 py-2.5 rounded-xl text-xs font-black bg-[#FFC300] text-black hover:bg-[#ffd030]">Haberi Getir</button></div>' +
-      '<div id="tonyArticleMessage" role="status" aria-live="polite" class="mt-2 text-xs text-zinc-400">Onaylı haber kaynakları ve NYC resmî siteleri desteklenir.</div>' +
+      '<button type="button" id="tonyFetchArticle" class="px-4 py-2.5 rounded-xl text-xs font-black bg-[#FFC300] text-black hover:bg-[#ffd030]">Import Article</button></div>' +
+      '<div id="tonyArticleMessage" role="status" aria-live="polite" class="mt-2 text-xs text-zinc-400">Supported NYC news outlets and official city sources only.</div>' +
       '<div id="tonyArticlePreview" class="hidden mt-3 rounded-xl border border-white/10 bg-zinc-900/80 p-3">' +
       '<div class="flex gap-3 items-start"><img id="tonyArticleThumb" class="hidden w-20 h-20 rounded-lg object-cover bg-black" alt="Source article thumbnail preview" />' +
       '<div class="min-w-0 flex-1"><div id="tonyArticleSite" class="text-[11px] text-[#FFC300] font-bold"></div>' +
       '<div id="tonyArticleTitle" class="text-sm text-white font-semibold mt-1"></div>' +
       '<div id="tonyArticleDescription" class="text-xs text-zinc-400 mt-1"></div></div></div>' +
-      '<p class="text-[11px] text-amber-300 mt-3">Kaynak görseli yalnızca referans içindir; kullanım izni olmadan haber kartına eklenmez.</p>' +
-      '<button type="button" id="tonyApplyArticle" class="mt-3 w-full bg-white text-black text-xs font-black py-2.5 rounded-xl hover:bg-zinc-200">Manşet, Kategori ve Bölgeyi Editöre Aktar</button></div>' +
+      '<p class="text-[11px] text-amber-300 mt-3">Source photos are for reference only. Do not publish without image rights.</p>' +
+      '<button type="button" id="tonyApplyArticle" class="mt-3 w-full bg-white text-black text-xs font-black py-2.5 rounded-xl hover:bg-zinc-200">Apply Headline, Category & Borough</button></div>' +
       '<div class="border-t border-white/10 mt-4 pt-4 space-y-3">' +
-      '<div class="flex justify-between items-center"><h3 class="text-xs font-bold text-white uppercase tracking-wide">Editoryal Kontrol</h3>' +
-      '<span class="text-[10px] text-zinc-500">Yerel taslak · Instagram yayını değil</span></div>' +
-      newBox('Kaynak bağlantısı', 'tonySourceUrl', 'https://...') +
+      '<div class="flex justify-between items-center"><h3 class="text-xs font-bold text-white uppercase tracking-wide">Editorial Review</h3>' +
+      '<span class="text-[10px] text-zinc-500">Local draft · Not an Instagram post</span></div>' +
+      newBox('Source URL', 'tonySourceUrl', 'https://...') +
       '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">' +
-      '<div><label for="tonyVerification" class="block text-xs font-semibold text-zinc-300 mb-1">Haber doğrulaması</label>' +
+      '<div><label for="tonyVerification" class="block text-xs font-semibold text-zinc-300 mb-1">Source Verification</label>' +
       '<select id="tonyVerification" class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3 py-2.5 text-xs text-white">' +
-      '<option value="needs-review">Kontrol edilmedi</option><option value="cross-checked">İkinci kaynakla doğrulandı</option>' +
-      '<option value="official-source">Resmî kaynaktan doğrulandı</option></select></div>' +
-      '<div><label for="tonyImagePermission" class="block text-xs font-semibold text-zinc-300 mb-1">Görsel kullanım hakkı</label>' +
+      '<option value="needs-review">Not yet verified</option><option value="cross-checked">Cross-checked with another source</option>' +
+      '<option value="official-source">Verified with an official source</option></select></div>' +
+      '<div><label for="tonyImagePermission" class="block text-xs font-semibold text-zinc-300 mb-1">Image Rights</label>' +
       '<select id="tonyImagePermission" class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3 py-2.5 text-xs text-white">' +
-      '<option value="unknown">Haklar kontrol edilmedi</option><option value="licensed">Lisans / izin mevcut</option>' +
-      '<option value="original">Özgün / kendi görselimiz</option><option value="none">Görsel kullanılmayacak</option></select></div></div>' +
-      newBox('Fotoğraf kredisi / lisans notu', 'tonyImageCredit', 'Fotoğrafçı, ajans veya lisans bilgisi') +
-      '<div><label for="tonyPublicationStatus" class="block text-xs font-semibold text-zinc-300 mb-1">Yayın durumu (manuel takip)</label>' +
+      '<option value="unknown">Rights not reviewed</option><option value="licensed">Licensed / permission granted</option>' +
+      '<option value="original">Original photo / owned by us</option><option value="none">Do not use an image</option></select></div></div>' +
+      newBox('Photo Credit / License Note', 'tonyImageCredit', 'Photographer, agency or license') +
+      '<div><label for="tonyPublicationStatus" class="block text-xs font-semibold text-zinc-300 mb-1">Publication Status (manual)</label>' +
       '<select id="tonyPublicationStatus" class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3 py-2.5 text-xs text-white">' +
-      '<option value="draft">Taslak</option><option value="review">Editör incelemesinde</option>' +
-      '<option value="ready">Yayına hazır</option><option value="published">Instagram’da manuel yayımlandı</option></select></div>' +
+      '<option value="draft">Draft</option><option value="review">In Editorial Review</option>' +
+      '<option value="ready">Ready to Publish</option><option value="published">Manually Published on Instagram</option></select></div>' +
       '<div class="flex flex-wrap gap-2">' +
-      '<button type="button" id="tonySaveDraft" class="grow px-3 py-2.5 rounded-xl bg-[#FFC300] text-black text-xs font-black">Taslağı Kaydet</button>' +
-      '<button type="button" id="tonyLoadDraft" class="grow px-3 py-2.5 rounded-xl bg-zinc-800 text-white text-xs font-semibold">Taslağı Geri Yükle</button></div>' +
-      '<p id="tonyDraftMessage" role="status" aria-live="polite" class="text-[11px] text-zinc-400">Taslaklar ve akış bu tarayıcıda saklanır, hesaplar arasında eşitlenmez.</p></div>';
+      '<button type="button" id="tonySaveDraft" class="grow px-3 py-2.5 rounded-xl bg-[#FFC300] text-black text-xs font-black">Save Draft</button>' +
+      '<button type="button" id="tonyLoadDraft" class="grow px-3 py-2.5 rounded-xl bg-zinc-800 text-white text-xs font-semibold">Restore Draft</button></div>' +
+      '<p id="tonyDraftMessage" role="status" aria-live="polite" class="text-[11px] text-zinc-400">Drafts are stored in this browser and are not synchronized across devices.</p></div>';
     section.insertBefore(panel, section.firstChild);
     $('tonyFetchArticle').addEventListener('click', fetchArticle);
     $('tonyArticleUrl').addEventListener('keydown', e => { if (e.key === 'Enter') fetchArticle(); });
@@ -97,7 +97,7 @@
     if (next === 'ready' && (!app.state.sourceUrl || app.state.verificationStatus === 'needs-review' || app.state.imagePermission === 'unknown')) {
       next = 'review';
       $('tonyPublicationStatus').value = 'review';
-      $('tonyDraftMessage').textContent = 'Yayına hazır için kaynak, haber doğrulaması ve görsel hakkı kontrolü gerekli.';
+      $('tonyDraftMessage').textContent = 'Ready to Publish requires an article source, verification and image rights review.';
     }
     app.state.publicationStatus = next;
   }
@@ -111,24 +111,24 @@
   }
   async function fetchArticle() {
     const input = $('tonyArticleUrl');
-    if (!input.value.trim()) { info('Haber URL’si gir.', true); return; }
+    if (!input.value.trim()) { info('Enter an article URL.', true); return; }
     try {
       const parsed = new URL(input.value.trim());
-      if (parsed.protocol !== 'https:') { info('Lütfen HTTPS bağlantısı kullan.', true); return; }
-    } catch { info('Geçerli bir bağlantı gir.', true); return; }
+      if (parsed.protocol !== 'https:') { info('Use an HTTPS URL.', true); return; }
+    } catch { info('Enter a valid URL.', true); return; }
     const button = $('tonyFetchArticle');
     button.disabled = true;
-    button.textContent = 'Getiriliyor…';
-    info('Kaynağın başlık ve açıklama bilgileri okunuyor…', false);
+    button.textContent = 'Importing…';
+    info('Reading the source headline and article metadata…', false);
     $('tonyArticlePreview').classList.add('hidden');
     try {
       const response = await fetch('/api/article?url=' + encodeURIComponent(input.value.trim()), {headers:{accept:'application/json'}});
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Kaynak okunamadı.');
+      if (!response.ok) throw new Error(data.error || 'The source could not be loaded.');
       currentArticle = data;
       $('tonyArticleSite').textContent = data.sourceName || 'NEWS SOURCE';
       $('tonyArticleTitle').textContent = data.title || '';
-      $('tonyArticleDescription').textContent = data.description || 'Açıklama alınamadı. Kaynaktan manuel kontrol et.';
+      $('tonyArticleDescription').textContent = data.description || 'Description not available. Check the article manually.';
       const thumb = $('tonyArticleThumb');
       if (data.imageUrl) {
         thumb.src = data.imageUrl;
@@ -139,13 +139,13 @@
         thumb.classList.add('hidden');
       }
       $('tonyArticlePreview').classList.remove('hidden');
-      info('Taslak bulundu. İkinci kaynak ve görsel kullanım hakları editör kontrolü gerektirir.', false);
+      info('Draft imported. Verify the article and photo rights before publishing.', false);
     } catch(e) {
       currentArticle = null;
-      info(e.message || 'İçe aktarma başarısız. Alanları manuel doldurabilirsin.', true);
+      info(e.message || 'Import failed. Enter article details manually.', true);
     } finally {
       button.disabled = false;
-      button.textContent = 'Haberi Getir';
+      button.textContent = 'Import Article';
     }
   }
   function applyArticle() {
@@ -168,9 +168,9 @@
     app.renderCanvas();
     setEditorial({ sourceUrl: a.sourceUrl, verificationStatus: 'needs-review', imagePermission: 'unknown', imageCredit: '', publicationStatus: 'draft' });
     $('tonyDraftMessage').textContent = a.publishedAt
-      ? 'Tarih kaynağın yayın zamanından (New York saati) alındı; mutlaka kontrol et.'
-      : 'Yayın tarihi bulunamadı; New York yerel saati kullanıldı.';
-    app.showToast('İncelemeye hazır haber taslağı aktarıldı');
+      ? 'Publication time came from the source (New York time). Confirm before posting.'
+      : 'No publication timestamp was found; using New York local time.';
+    app.showToast('Article draft imported for review');
   }
   function serializeCurrent() {
     const s = window.TONYStudio.state;
@@ -189,16 +189,16 @@
     try {
       syncEditorial();
       localStorage.setItem(KEY_DRAFT, JSON.stringify(serializeCurrent()));
-      $('tonyDraftMessage').textContent = 'Taslak bu cihazda kaydedildi. Görsel dosyası ayrıca saklanmaz.';
-      window.TONYStudio.showToast('Haber taslağı kaydedildi');
+      $('tonyDraftMessage').textContent = 'Draft saved on this device. Uploaded photos are not saved.';
+      window.TONYStudio.showToast('News draft saved');
     } catch {
-      $('tonyDraftMessage').textContent = 'Tarayıcı alanı dolu veya depolama kapalı; taslak kaydedilemedi.';
+      $('tonyDraftMessage').textContent = 'Browser storage is unavailable or full. Could not save draft.';
     }
   }
   function loadDraft() {
     try {
       const raw = localStorage.getItem(KEY_DRAFT);
-      if (!raw) { $('tonyDraftMessage').textContent = 'Kayıtlı taslak bulunamadı.'; return; }
+      if (!raw) { $('tonyDraftMessage').textContent = 'No saved draft found.'; return; }
       const d = JSON.parse(raw);
       const app = window.TONYStudio;
       app.applyPreset({badgeText:d.badgeText || 'NYC NEWS',badgeColor:d.badgeColor || '#FFC300',
@@ -209,9 +209,9 @@
       app.state.sourcePublishedAt=d.sourcePublishedAt || null;
       setEditorial(d);
       app.renderCanvas();
-      $('tonyDraftMessage').textContent = 'Taslak geri yüklendi. Fotoğraf gerekiyorsa yeniden yükle.';
-      app.showToast('Taslak yüklendi');
-    } catch { $('tonyDraftMessage').textContent = 'Kaydedilen taslak okunamadı.'; }
+      $('tonyDraftMessage').textContent = 'Draft restored. Re-upload the photo if needed.';
+      app.showToast('Draft loaded');
+    } catch { $('tonyDraftMessage').textContent = 'Could not read saved draft.'; }
   }
   function compactPreview(dataUrl) {
     try {

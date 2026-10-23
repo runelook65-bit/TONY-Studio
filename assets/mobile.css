@@ -99,16 +99,7 @@
   main .tony-mobile-panel textarea:focus-visible,
   main .tony-mobile-panel select:focus-visible { outline: 2px solid #ffc300; outline-offset: 1px; }
 
-  /* Clear away unrelated Turkish presets on the American newsroom's phone view */
-  #tonyMobileTextPanel .badge-preset[data-badge="SON DAKİKA"],
-  #tonyMobileTextPanel .badge-preset[data-badge="ŞEHİR YAŞAMI"],
-  #tonyMobileTextPanel .badge-preset[data-badge="ULAŞIM"],
-  #tonyMobileTextPanel .badge-preset[data-badge="ANALİZ"],
-  #tonyMobileDatePanel .region-chip[data-region="İSTANBUL"],
-  #tonyMobileDatePanel .region-chip[data-region="ANKARA"],
-  #tonyMobileDatePanel .region-chip[data-region="İZMİR"],
-  #tonyMobileDatePanel .region-chip[data-region="TÜRKİYE GENELİ"],
-  #tonyMobileDatePanel #btnDateLangTR { display: none; }
+  /* English NYC categories and boroughs are now the actual source controls. */
   #tonyMobileTextPanel .badge-preset, #tonyMobileDatePanel .region-chip { min-height: 36px; padding-left: 10px; padding-right: 10px; }
   #tonyMobileTextPanel #headlineInput { font-size: 18px !important; min-height: 84px; letter-spacing: -.015em; }
   #tonyMobileTextPanel #summaryInput { min-height: 106px; }
@@ -119,7 +110,7 @@
   #tonyMobileDatePanel #btnSetNow { font-size: 11px; min-height: 34px; }
   #tonyMobileDatePanel .grid.grid-cols-1 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 9px; }
   #tonyMobileDatePanel #btnDateLangEN { font-size: 10px; }
-  #tonyMobileDatePanel .flex.flex-wrap.mt-3 { display: none; }
+  #tonyMobileDatePanel .flex.flex-wrap.mt-3 { display: flex; gap: 8px; flex-wrap: wrap; }
   #tonyMobilePhotoPanel #dropZone { padding: 21px 12px !important; min-height: 132px; }
   #tonyMobilePhotoPanel #dropZone > p:first-of-type { font-size: 14px; }
   #tonyMobilePhotoPanel #dropZone > p:last-of-type { font-size: 11px; }

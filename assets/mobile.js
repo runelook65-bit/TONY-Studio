@@ -3,9 +3,9 @@
   'use strict';
 
   const LABELS = {
-    story: { title: 'Haberi hazırla', number: '01', note: 'Manşet, kaynak ve konum' },
-    design: { title: 'Görseli düzenle', number: '02', note: 'Fotoğraf ve canlı ön izleme' },
-    publish: { title: 'Yayına hazırla', number: '03', note: 'Instagram, PNG ve taslaklar' }
+    story: { title: 'Create Story', number: '01', note: 'Headline, source and borough' },
+    design: { title: 'Design Graphic', number: '02', note: 'Photo and live preview' },
+    publish: { title: 'Publish Story', number: '03', note: 'Instagram, PNG and drafts' }
   };
   const VIEWS = ['story', 'design', 'publish'];
   const $ = id => document.getElementById(id);
@@ -52,19 +52,19 @@
     const nav = document.createElement('nav');
     nav.id = 'tonyMobileNavigation';
     nav.className = 'tony-mobile-only tony-mobile-navigation';
-    nav.setAttribute('aria-label', 'Mobil haber oluşturma aşamaları');
+    nav.setAttribute('aria-label', 'Mobile newsroom steps');
     nav.innerHTML = [
       '<div class="tony-mobile-heading">',
       ' <div><span class="tony-mobile-eyebrow">THE ONLY NEW YORK <span aria-hidden="true">•</span> NEWSROOM</span>',
-      ' <h1 id="tonyMobileScreenTitle">Haberi hazırla</h1></div>',
+      ' <h1 id="tonyMobileScreenTitle">Create Story</h1></div>',
       ' <span id="tonyMobileProgress" class="tony-mobile-progress">01 / 03</span>',
       '</div>',
-      '<div class="tony-mobile-tabs" role="tablist" aria-label="Haber aşamaları">',
-      '<button type="button" role="tab" data-tony-tab="story" aria-controls="tonyMobileTextPanel" aria-selected="true"><span class="tony-mobile-tab-num">01</span>Haber</button>',
-      '<button type="button" role="tab" data-tony-tab="design" aria-controls="tonyMobilePreviewPanel" aria-selected="false"><span class="tony-mobile-tab-num">02</span>Tasarım</button>',
-      '<button type="button" role="tab" data-tony-tab="publish" aria-controls="tonyIgPanel" aria-selected="false"><span class="tony-mobile-tab-num">03</span>Yayın</button>',
+      '<div class="tony-mobile-tabs" role="tablist" aria-label="Newsroom steps">',
+      '<button type="button" role="tab" data-tony-tab="story" aria-controls="tonyMobileTextPanel" aria-selected="true"><span class="tony-mobile-tab-num">01</span>Story</button>',
+      '<button type="button" role="tab" data-tony-tab="design" aria-controls="tonyMobilePreviewPanel" aria-selected="false"><span class="tony-mobile-tab-num">02</span>Design</button>',
+      '<button type="button" role="tab" data-tony-tab="publish" aria-controls="tonyIgPanel" aria-selected="false"><span class="tony-mobile-tab-num">03</span>Publish</button>',
       '</div>',
-      '<p id="tonyMobileStepNote" class="tony-mobile-step-note">Manşet, kaynak ve konum</p>'
+      '<p id="tonyMobileStepNote" class="tony-mobile-step-note">Headline, source and borough</p>'
     ].join('');
     header.after(nav);
 
@@ -73,9 +73,9 @@
     bar.className = 'tony-mobile-only tony-mobile-actions';
     bar.innerHTML = [
       '<div class="tony-mobile-actions-inner">',
-      '<button type="button" id="tonyMobileBack" class="tony-mobile-back" aria-label="Önceki adıma dön">‹ <span>Geri</span></button>',
-      '<button type="button" id="tonyMobileSecondary" class="tony-mobile-secondary" hidden>PNG indir</button>',
-      '<button type="button" id="tonyMobileNext" class="tony-mobile-primary">Tasarıma geç <span aria-hidden="true">→</span></button>',
+      '<button type="button" id="tonyMobileBack" class="tony-mobile-back" aria-label="Previous step">‹ <span>Back</span></button>',
+      '<button type="button" id="tonyMobileSecondary" class="tony-mobile-secondary" hidden>Save PNG</button>',
+      '<button type="button" id="tonyMobileNext" class="tony-mobile-primary">Continue to Design <span aria-hidden="true">→</span></button>',
       '</div>'
     ].join('');
     document.body.appendChild(bar);
@@ -119,11 +119,11 @@
     summary.style.setProperty('--tony-mobile-order', '1');
     summary.innerHTML = [
       '<div class="tony-mobile-summary-head">',
-      ' <span class="tony-mobile-eyebrow">GÖNDERİ ÖN İZLEMESİ</span>',
-      ' <button id="tonyMobileEditDesign" type="button" class="tony-mobile-inline-link">Görsele dön ↗</button>',
+      ' <span class="tony-mobile-eyebrow">POST PREVIEW</span>',
+      ' <button id="tonyMobileEditDesign" type="button" class="tony-mobile-inline-link">Edit Graphic ↗</button>',
       '</div>',
       '<div class="tony-mobile-summary-body">',
-      ' <img id="tonyMobileSummaryImage" alt="Gönderinin son görsel ön izlemesi" />',
+      ' <img id="tonyMobileSummaryImage" alt="Preview of the final news graphic" />',
       ' <div><p class="tony-mobile-summary-kicker">TONY. / THE ONLY NEW YORK</p>',
       ' <p id="tonyMobileSummaryTitle" class="tony-mobile-summary-title"></p>',
       ' <p id="tonyMobileSummaryRegion" class="tony-mobile-summary-region"></p></div>',
@@ -165,7 +165,7 @@
     trigger.setAttribute('aria-expanded', 'false');
     trigger.setAttribute('aria-controls', 'tonyMobileBrandSettings');
     trigger.className = 'tony-mobile-only tony-mobile-advanced-toggle';
-    trigger.innerHTML = '<span>Gelişmiş logo ve şablon ayarları</span><span aria-hidden="true">⌄</span>';
+    trigger.innerHTML = '<span>Advanced branding and layout</span><span aria-hidden="true">⌄</span>';
     const children = Array.from(brand.children);
     const content = document.createElement('div');
     content.id = 'tonyMobileBrandSettings';
@@ -183,7 +183,7 @@
     if (!s) return;
     const label = $('tonyMobileSummaryTitle');
     const region = $('tonyMobileSummaryRegion');
-    if (label) label.textContent = s.headline?.trim() || 'Yeni haber başlığı';
+    if (label) label.textContent = s.headline?.trim() || 'New story headline';
     if (region) region.textContent = '📍 ' + (s.region || 'NEW YORK CITY');
   }
 
@@ -197,7 +197,7 @@
       img.src = app.canvas.toDataURL('image/jpeg', 0.55);
     } catch {
       img.removeAttribute('src');
-      img.alt = 'Ön izleme henüz hazır değil';
+      img.alt = 'Preview not ready';
     }
   }
 
@@ -218,9 +218,9 @@
     back.hidden = selected === 0;
     $('tonyMobileSecondary').hidden = view !== 'publish';
     const primary = $('tonyMobileNext');
-    primary.innerHTML = view === 'story' ? 'Tasarıma geç <span aria-hidden="true">→</span>'
-      : view === 'design' ? 'Yayına geç <span aria-hidden="true">→</span>'
-      : 'Instagram’a gönder <span aria-hidden="true">↗</span>';
+    primary.innerHTML = view === 'story' ? 'Continue to Design <span aria-hidden="true">→</span>'
+      : view === 'design' ? 'Continue to Publish <span aria-hidden="true">→</span>'
+      : 'Post to Instagram <span aria-hidden="true">↗</span>';
     if (view === 'publish') refreshSummary();
     if (view === 'design') window.TONYStudio?.renderCanvas();
     if (scroll && mobile()) {
@@ -237,7 +237,7 @@
     count.className = 'tony-mobile-only tony-mobile-counter';
     input?.insertAdjacentElement('afterend', count);
     const paint = () => {
-      if (count && input) count.textContent = input.value.length + ' karakter';
+      if (count && input) count.textContent = input.value.length + ' characters';
       updateStatus();
     };
     input?.addEventListener('input', paint);
