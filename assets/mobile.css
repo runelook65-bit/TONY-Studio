@@ -1,0 +1,204 @@
+/* TONY Studio mobile-first UI. Desktop markup and layout remain untouched. */
+.tony-mobile-only { display: none; }
+.tony-mobile-borough { padding: 5px 11px; border-radius: 8px; background: #27272a; color: #f4f4f5; font-size: 12px; font-weight: 650; }
+.tony-mobile-borough:hover { background: #3f3f46; }
+
+@media (max-width: 767px) {
+  :root { color-scheme: dark; }
+  html { scroll-behavior: auto; overflow-x: clip; }
+  body { overflow-x: clip; min-width: 0; padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)); }
+  .tony-mobile-only { display: block; }
+
+  /* Compact masthead instead of a multi-line desktop toolbar */
+  body > header {
+    top: 0;
+    z-index: 42;
+    padding: 9px 15px !important;
+    border-color: rgba(255,255,255,.07);
+    padding-top: calc(9px + env(safe-area-inset-top, 0px)) !important;
+  }
+  body > header > div { display: flex; flex-wrap: nowrap; gap: 0; }
+  body > header > div > div:first-child { width: 100%; min-width: 0; }
+  body > header > div > div:first-child > div:first-child {
+    border-radius: 10px;
+    padding: 7px 11px !important;
+  }
+  body > header > div > div:first-child > div:first-child span:first-child { font-size: 22px; }
+  body > header > div > div:first-child > div:nth-child(2) { display: none; }
+  body > header > div > div:last-child { display: none; }
+
+  .tony-mobile-navigation {
+    position: sticky;
+    top: 56px;
+    z-index: 40;
+    padding: 14px 16px 9px;
+    background: rgba(8,8,10,.96);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid #242429;
+  }
+  .tony-mobile-heading { display: flex; justify-content: space-between; gap: 8px; align-items: center; margin-bottom: 14px; }
+  .tony-mobile-eyebrow { font-size: 9px; letter-spacing: .15em; color: #a1a1aa; font-weight: 800; line-height: 1.5; }
+  .tony-mobile-eyebrow span { color: #ffc300; }
+  .tony-mobile-heading h1 { color: #fff; margin-top: 3px; font-size: 23px; line-height: 1.2; font-weight: 850; letter-spacing: -.045em; }
+  .tony-mobile-progress { border: 1px solid #44403c; color: #ffc300; background: #171714; border-radius: 10px; padding: 8px 10px; font-size: 11px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tony-mobile-tabs { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); align-items: stretch; gap: 5px; }
+  .tony-mobile-tabs > button {
+    min-width: 0; min-height: 46px;
+    background: #19191d; border: 1px solid #2d2d31; color: #a1a1aa; border-radius: 11px;
+    font-size: 12px; font-weight: 750; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 5px; transition: background .15s, color .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tony-mobile-tabs > button[aria-selected="true"] { background: #ffc300; border-color: #ffc300; color: #131313; }
+  .tony-mobile-tab-num { font-size: 10px; opacity: .75; font-weight: 800; }
+  .tony-mobile-tabs > button:focus-visible, .tony-mobile-actions button:focus-visible { outline: 2px solid #ffc300; outline-offset: 3px; }
+  .tony-mobile-tabs > button[aria-selected="true"]:focus-visible { outline-color: white; }
+  .tony-mobile-step-note { font-size: 11px; color: #90909b; margin-top: 8px; }
+
+  /* Flatten columns so steps can be re-ordered independently on phones. */
+  main {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+    padding: 14px 12px 30px !important;
+    gap: 12px !important;
+  }
+  main > section { display: contents !important; }
+  main .tony-mobile-panel { display: none !important; min-width: 0; order: var(--tony-mobile-order, 5); }
+  body[data-tony-mobile-view="story"] main .tony-mobile-panel[data-tony-mobile-panel="story"],
+  body[data-tony-mobile-view="design"] main .tony-mobile-panel[data-tony-mobile-panel="design"],
+  body[data-tony-mobile-view="publish"] main .tony-mobile-panel[data-tony-mobile-panel="publish"] {
+    display: block !important;
+  }
+  main .tony-mobile-panel {
+    border-radius: 16px;
+    background: #121216;
+    border: 1px solid #29292f;
+    padding: 15px !important;
+    box-shadow: none !important;
+    scroll-margin-top: 178px;
+  }
+  main .tony-mobile-panel > :first-child h2,
+  main .tony-mobile-panel > :first-child h3 { font-size: 13px; line-height: 1.4; }
+  main .tony-mobile-panel > :first-child { min-width: 0; }
+  main .tony-mobile-panel :is(input:not([type="range"]):not([type="checkbox"]):not([type="file"]), select, textarea) {
+    max-width: 100%;
+    min-width: 0;
+    font-size: 16px !important;
+    line-height: 1.4;
+  }
+  main .tony-mobile-panel textarea { resize: vertical; }
+  main .tony-mobile-panel :is(button, a, input, textarea, select) { touch-action: manipulation; }
+  main .tony-mobile-panel :is(button, input[type="checkbox"], input[type="range"]) { -webkit-tap-highlight-color: transparent; }
+  main .tony-mobile-panel button { min-height: 38px; }
+  main .tony-mobile-panel :is(input[type="checkbox"],input[type="range"]) { accent-color: #ffc300; }
+  main .tony-mobile-panel input[type="range"] { min-height: 32px; }
+  main .tony-mobile-panel input:focus-visible,
+  main .tony-mobile-panel textarea:focus-visible,
+  main .tony-mobile-panel select:focus-visible { outline: 2px solid #ffc300; outline-offset: 1px; }
+
+  /* Clear away unrelated Turkish presets on the American newsroom's phone view */
+  #tonyMobileTextPanel .badge-preset[data-badge="SON DAKİKA"],
+  #tonyMobileTextPanel .badge-preset[data-badge="ŞEHİR YAŞAMI"],
+  #tonyMobileTextPanel .badge-preset[data-badge="ULAŞIM"],
+  #tonyMobileTextPanel .badge-preset[data-badge="ANALİZ"],
+  #tonyMobileDatePanel .region-chip[data-region="İSTANBUL"],
+  #tonyMobileDatePanel .region-chip[data-region="ANKARA"],
+  #tonyMobileDatePanel .region-chip[data-region="İZMİR"],
+  #tonyMobileDatePanel .region-chip[data-region="TÜRKİYE GENELİ"],
+  #tonyMobileDatePanel #btnDateLangTR { display: none; }
+  #tonyMobileTextPanel .badge-preset, #tonyMobileDatePanel .region-chip { min-height: 36px; padding-left: 10px; padding-right: 10px; }
+  #tonyMobileTextPanel #headlineInput { font-size: 18px !important; min-height: 84px; letter-spacing: -.015em; }
+  #tonyMobileTextPanel #summaryInput { min-height: 106px; }
+  .tony-mobile-counter { text-align: right; color: #858590; font-size: 10px; padding: 5px 3px 0; }
+  #tonyMobileTextPanel .color-swatch { min-width: 26px; min-height: 26px; }
+  #tonyMobileTextPanel input#badgeTextInput { width: 0; }
+  #tonyMobileDatePanel .region-chip { font-size: 11px; }
+  #tonyMobileDatePanel #btnSetNow { font-size: 11px; min-height: 34px; }
+  #tonyMobileDatePanel .grid.grid-cols-1 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 9px; }
+  #tonyMobileDatePanel #btnDateLangEN { font-size: 10px; }
+  #tonyMobileDatePanel .flex.flex-wrap.mt-3 { display: none; }
+  #tonyMobilePhotoPanel #dropZone { padding: 21px 12px !important; min-height: 132px; }
+  #tonyMobilePhotoPanel #dropZone > p:first-of-type { font-size: 14px; }
+  #tonyMobilePhotoPanel #dropZone > p:last-of-type { font-size: 11px; }
+  #tonyMobilePhotoPanel #btnSampleMetro, #tonyMobilePhotoPanel #btnSampleSkyline { min-height: 38px; }
+  #tonyMobileBrandPanel { padding: 0 !important; overflow: hidden; }
+  #tonyMobileBrandSettings { display: none; padding: 0 15px 16px; }
+  #tonyMobileBrandPanel.tony-mobile-expanded #tonyMobileBrandSettings { display: block; }
+  .tony-mobile-advanced-toggle { display: flex; justify-content: space-between; align-items: center; width: 100%; border: 0; color: #e4e4e7; padding: 16px; background: #1b1b20; font-size: 12px; font-weight: 750; }
+  .tony-mobile-advanced-toggle > span:last-child { color: #ffc300; font-size: 18px; transition: transform .2s; }
+  #tonyMobileBrandPanel.tony-mobile-expanded .tony-mobile-advanced-toggle > span:last-child { transform: rotate(180deg); }
+  #tonyMobileBrandSettings > :first-child { margin-top: 14px; }
+  #tonyMobileBrandSettings input[type="checkbox"] { min-width: 17px; min-height: 17px; }
+  #tonyMobileBrandSettings .flex.flex-wrap { gap: 12px !important; }
+
+  /* Big responsive canvas with no horizontal scrolling and touch-friendly pan. */
+  #tonyMobilePreviewPanel { padding: 13px !important; }
+  #tonyMobilePreviewPanel > div:first-child { gap: 5px; margin-bottom: 12px; }
+  #tonyMobilePreviewPanel > div:first-child > span:last-child { font-size: 10px; }
+  #tonyMobilePreviewPanel > div:nth-child(2) { padding: 5px !important; border-radius: 12px; overflow: hidden; }
+  #tonyMobilePreviewPanel > div:nth-child(2) > div { max-width: 100%; }
+  #newsCanvas { display: block; max-width: 100%; height: auto !important; touch-action: pan-y; border-radius: 8px; }
+  #tonyMobilePreviewPanel > div:last-child { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; margin-top: 12px !important; }
+  #btnDownloadPNG, #btnPublishToGrid, #btnCopyCaption { font-size: 12px !important; min-width: 0; min-height: 46px; padding: 10px 8px !important; }
+  #btnCopyCaption { grid-column: 1 / -1; }
+
+  /* News and publishing panels keep full desktop capabilities behind simpler mobile layouts */
+  #tonyArticlePanel h2 { font-size: 13px; }
+  #tonyArticlePanel #tonyFetchArticle { min-height: 43px; }
+  #tonyArticlePanel .mt-3.rounded-xl { overflow-wrap: anywhere; }
+  #tonyIgPanel #tonyIgCaption { min-height: 120px; }
+  #tonyIgPanel #tonyIgPublish { min-height: 51px; }
+  #tonyIgPanel #tonyIgConnection { overflow-wrap: anywhere; }
+  #tonyMobileFeedPanel #feedGridContainer { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; }
+  #tonyMobileFeedPanel > div:first-child { margin-bottom: 12px; }
+  #tonyMobileFeedPanel #btnResetFeed { padding: 5px; }
+  #tonyMobileFeedPanel .group.relative { min-width: 0; }
+
+  .tony-mobile-publish-summary { overflow: hidden; }
+  .tony-mobile-summary-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding-bottom: 11px; margin-bottom: 11px; border-bottom: 1px solid #29292f; }
+  .tony-mobile-inline-link { color: #ffc300; font-size: 11px; font-weight: 750; }
+  .tony-mobile-summary-body { display: flex; gap: 12px; align-items: center; min-width: 0; }
+  #tonyMobileSummaryImage { width: 92px; flex: 0 0 92px; min-height: 92px; max-height: 122px; object-fit: cover; border-radius: 8px; background: #0b0b0b; }
+  .tony-mobile-summary-body > div { min-width: 0; }
+  .tony-mobile-summary-kicker { font-size: 9px; color: #ffc300; letter-spacing: .08em; font-weight: 800; margin-bottom: 6px; }
+  .tony-mobile-summary-title { font-size: 14px; line-height: 1.36; color: white; font-weight: 750; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; overflow-wrap: anywhere; }
+  .tony-mobile-summary-region { font-size: 11px; color: #a1a1aa; margin-top: 7px; }
+
+  /* Persistent, safe-area aware bottom action bar */
+  .tony-mobile-actions {
+    position: fixed; z-index: 48; bottom: 0; left: 0; right: 0;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: rgba(12,12,15,.97);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid #333339;
+    box-shadow: 0 -8px 25px rgba(0,0,0,.32);
+  }
+  .tony-mobile-actions-inner { display: flex; align-items: stretch; gap: 9px; max-width: 560px; margin: 0 auto; }
+  .tony-mobile-actions button { min-height: 50px; border-radius: 12px; padding: 11px 13px; font-size: 13px; font-weight: 800; -webkit-tap-highlight-color: transparent; }
+  .tony-mobile-back { flex: 0 0 auto; min-width: 77px; background: #242429; border: 1px solid #3a3a42; color: #ededf0; }
+  .tony-mobile-back:not([hidden]) { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+  .tony-mobile-primary { min-width: 0; flex: 1; background: #ffc300; color: #141414; }
+  .tony-mobile-secondary { flex: 0 0 auto; color: #fff; background: #242429; border: 1px solid #3a3a42; }
+  .tony-mobile-actions button[hidden] { display: none !important; }
+  /* iOS scroll safe modal */
+  #refModal { padding: 12px; padding-bottom: calc(12px + env(safe-area-inset-bottom,0px)); }
+  #refModal > div { max-height: calc(100dvh - 40px); overflow-y: auto; }
+  #toastBox { z-index: 60; }
+
+  @media (max-width: 370px) {
+    .tony-mobile-actions button { padding-left: 10px; padding-right: 10px; font-size: 12px; }
+    .tony-mobile-secondary { font-size: 11px !important; }
+    .tony-mobile-heading h1 { font-size: 21px; }
+    #tonyMobileDatePanel .grid.grid-cols-1 { grid-template-columns: 1fr !important; }
+    .tony-mobile-navigation { padding-left: 11px; padding-right: 11px; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tony-mobile-tabs > button,
+  .tony-mobile-advanced-toggle > span:last-child { transition: none; }
+}
