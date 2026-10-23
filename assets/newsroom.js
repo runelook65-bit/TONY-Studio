@@ -33,6 +33,7 @@
     const section = document.querySelector('main > section');
     if (!section || $('tonyArticleUrl')) return;
     const panel = document.createElement('div');
+    panel.id = 'tonyArticlePanel';
     panel.className = 'bg-[#121216] border border-[#FFC300]/35 rounded-2xl p-4 sm:p-5 shadow-lg';
     panel.innerHTML =
       '<div class="flex gap-2 items-center mb-2">' +
