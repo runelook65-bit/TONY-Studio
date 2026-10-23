@@ -65,6 +65,10 @@
       '<option value="unknown">Haklar kontrol edilmedi</option><option value="licensed">Lisans / izin mevcut</option>' +
       '<option value="original">Özgün / kendi görselimiz</option><option value="none">Görsel kullanılmayacak</option></select></div></div>' +
       newBox('Fotoğraf kredisi / lisans notu', 'tonyImageCredit', 'Fotoğrafçı, ajans veya lisans bilgisi') +
+      '<div><label for="tonyPublicationStatus" class="block text-xs font-semibold text-zinc-300 mb-1">Yayın durumu (manuel takip)</label>' +
+      '<select id="tonyPublicationStatus" class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3 py-2.5 text-xs text-white">' +
+      '<option value="draft">Taslak</option><option value="review">Editör incelemesinde</option>' +
+      '<option value="ready">Yayına hazır</option><option value="published">Instagram’da manuel yayımlandı</option></select></div>' +
       '<div class="flex flex-wrap gap-2">' +
       '<button type="button" id="tonySaveDraft" class="grow px-3 py-2.5 rounded-xl bg-[#FFC300] text-black text-xs font-black">Taslağı Kaydet</button>' +
       '<button type="button" id="tonyLoadDraft" class="grow px-3 py-2.5 rounded-xl bg-zinc-800 text-white text-xs font-semibold">Taslağı Geri Yükle</button></div>' +
@@ -79,6 +83,7 @@
     $('tonyVerification').addEventListener('change', syncEditorial);
     $('tonyImagePermission').addEventListener('change', syncEditorial);
     $('tonyImageCredit').addEventListener('input', syncEditorial);
+    $('tonyPublicationStatus').addEventListener('change', syncEditorial);
   }
   function syncEditorial() {
     const app = window.TONYStudio;
@@ -87,12 +92,20 @@
     app.state.verificationStatus = $('tonyVerification').value;
     app.state.imagePermission = $('tonyImagePermission').value;
     app.state.imageCredit = $('tonyImageCredit').value.trim();
+    let next = $('tonyPublicationStatus').value;
+    if (next === 'ready' && (!app.state.sourceUrl || app.state.verificationStatus === 'needs-review' || app.state.imagePermission === 'unknown')) {
+      next = 'review';
+      $('tonyPublicationStatus').value = 'review';
+      $('tonyDraftMessage').textContent = 'Yayına hazır için kaynak, haber doğrulaması ve görsel hakkı kontrolü gerekli.';
+    }
+    app.state.publicationStatus = next;
   }
   function setEditorial(post) {
     $('tonySourceUrl').value = post.sourceUrl || '';
     $('tonyVerification').value = post.verificationStatus || 'needs-review';
     $('tonyImagePermission').value = post.imagePermission || 'unknown';
     $('tonyImageCredit').value = post.imageCredit || '';
+    $('tonyPublicationStatus').value = post.publicationStatus || 'draft';
     syncEditorial();
   }
   async function fetchArticle() {
@@ -152,7 +165,7 @@
     app.state.sourceName = a.sourceName || '';
     app.state.sourcePublishedAt = a.publishedAt || null;
     app.renderCanvas();
-    setEditorial({ sourceUrl: a.sourceUrl, verificationStatus: 'needs-review', imagePermission: 'unknown', imageCredit: '' });
+    setEditorial({ sourceUrl: a.sourceUrl, verificationStatus: 'needs-review', imagePermission: 'unknown', imageCredit: '', publicationStatus: 'draft' });
     $('tonyDraftMessage').textContent = a.publishedAt
       ? 'Tarih kaynağın yayın zamanından (New York saati) alındı; mutlaka kontrol et.'
       : 'Yayın tarihi bulunamadı; New York yerel saati kullanıldı.';
@@ -167,6 +180,7 @@
       sourcePublishedAt:s.sourcePublishedAt || null,
       verificationStatus:s.verificationStatus || 'needs-review',
       imagePermission:s.imagePermission || 'unknown',imageCredit:s.imageCredit || '',
+      publicationStatus:s.publicationStatus || 'draft',
       savedAt:new Date().toISOString()
     };
   }
@@ -223,6 +237,7 @@
         dateLang:p.dateLang,sourceUrl:p.sourceUrl || '',sourceName:p.sourceName || '',
         verificationStatus:p.verificationStatus || 'needs-review',
         imagePermission:p.imagePermission || 'unknown',imageCredit:p.imageCredit || '',
+        publicationStatus:p.publicationStatus || 'draft',
         previewUrl: p.previewUrl && p.previewUrl.length < 85000 ? p.previewUrl : ''
       }));
       localStorage.setItem(KEY_FEED,JSON.stringify(posts));
@@ -267,6 +282,6 @@
       headline:app.state.headline,summary:app.state.summary,region:app.state.region,dateLang:'EN'});
     app.renderCanvas();
   }
-  window.TONYNewsroom = { mount, restoreFeed, captureFeedPreview, persistFeed, setDefaults, setEditorial };
+  window.TONYNewsroom = { mount, restoreFeed, captureFeedPreview, persistFeed, setDefaults, setEditorial, nyTime };
   document.addEventListener('DOMContentLoaded', mount);
 })();
