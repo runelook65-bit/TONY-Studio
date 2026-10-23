@@ -1,5 +1,5 @@
 'use strict';
-const lib=require('./_lib');
+const lib=require('../../lib/instagram');
 const MAX_AGE=60*24*3600;
 async function main(req,res){
  const page=new URL(process.env.INSTAGRAM_REDIRECT_URI || 'https://invalid.example/api/instagram/callback').origin+'/';
