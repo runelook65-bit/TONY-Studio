@@ -1,6 +1,6 @@
 'use strict';
 const crypto=require('node:crypto');
-const lib=require('./_lib');
+const lib=require('../../lib/instagram');
 module.exports=async(req,res)=>{
  if(req.method!=='GET'){res.setHeader('Allow','GET');return lib.send(res,405,{error:'Method not allowed.'});}
  if(!lib.ready())return lib.send(res,503,{error:'Configure Meta app, newsroom access and Blob storage first.'});
