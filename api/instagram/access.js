@@ -1,6 +1,6 @@
 'use strict';
 const crypto=require('node:crypto');
-const lib=require('./_lib');
+const lib=require('../../lib/instagram');
 const SEC=7*24*3600;
 module.exports=async(req,res)=>{
   if(req.method==='GET'){
