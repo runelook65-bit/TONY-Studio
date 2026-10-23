@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="en-US" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -65,24 +65,21 @@
         </div>
         <div>
           <h1 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-            Hızlı Haber & Yayın Oluşturucu
-            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#FFC300]/15 text-[#FFC300] border border-[#FFC300]/30">Canlı Şablon</span>
+            NYC Newsroom & Publishing Studio
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#FFC300]/15 text-[#FFC300] border border-[#FFC300]/30">Live Editor</span>
           </h1>
-          <p class="text-xs text-zinc-400">Görsel yükle, haber yazısını ve tarih-saat-bölge bilgisini gir, tek tıkla indir veya akışa ekle.</p>
+          <p class="text-xs text-zinc-400">Create verified New York news graphics across all five boroughs.</p>
         </div>
       </div>
 
       <!-- Sağ: Hızlı Şablon Modu & Aksiyonlar -->
       <div class="flex items-center gap-2">
-        <button id="btnPresetTR" type="button" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#FFC300] text-black hover:bg-[#ffd033] transition">
-          TR Örnek Haber
-        </button>
         <button id="btnPresetEN" type="button" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-200 hover:bg-zinc-700 border border-white/10 transition">
-          NYC (TONY.) Örnek
+          NYC Demo Story
         </button>
         <button id="btnOpenRefModal" type="button" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-900 text-zinc-300 hover:text-white hover:bg-zinc-800 border border-white/10 transition flex items-center gap-1.5">
           <svg class="w-3.5 h-3.5 text-[#FFC300]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          Şablon Rehberi
+          Design Guide
         </button>
       </div>
     </div>
@@ -99,9 +96,9 @@
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
             <span class="w-6 h-6 rounded-full bg-[#FFC300] text-black font-extrabold text-xs flex items-center justify-center">1</span>
-            <h2 class="text-sm font-bold uppercase tracking-wider text-white">Görsel Ekleme</h2>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-white">Upload Photo</h2>
           </div>
-          <span class="text-[11px] text-zinc-400">Sürükle, Seç veya Yapıştır (Ctrl+V)</span>
+          <span class="text-[11px] text-zinc-400">Upload or drag a photo</span>
         </div>
 
         <!-- Dosya Yükleme Kutusu -->
@@ -112,23 +109,23 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
             </svg>
           </div>
-          <p class="text-xs sm:text-sm font-semibold text-white">Bilgisayardan veya Telefondan Görsel Seç</p>
-          <p class="text-[11px] text-zinc-400 mt-0.5">JPG, PNG, WEBP • Görseli buraya sürükleyebilirsin</p>
+          <p class="text-xs sm:text-sm font-semibold text-white">Choose a Photo</p>
+          <p class="text-[11px] text-zinc-400 mt-0.5">JPG, PNG, WEBP · Drag and drop supported</p>
         </label>
 
         <!-- Hazır Örnek Arka Planlar & Görsel Kontrolleri -->
         <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-1.5">
-            <span class="text-[11px] font-medium text-zinc-400 mr-1">Hazır Görsel:</span>
+            <span class="text-[11px] font-medium text-zinc-400 mr-1">Sample Image:</span>
             <button id="btnSampleMetro" type="button" class="px-2.5 py-1 rounded-md text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-white/10 transition">
-              Metro / Ulaşım
+              NYC Subway
             </button>
             <button id="btnSampleSkyline" type="button" class="px-2.5 py-1 rounded-md text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-white/10 transition">
-              Şehir Manzarası
+              NYC Skyline
             </button>
           </div>
           <button id="btnResetCrop" type="button" class="text-[11px] font-medium text-[#FFC300] hover:underline">
-            Kadrajı Sıfırla
+            Reset Crop
           </button>
         </div>
 
@@ -136,14 +133,14 @@
         <div class="mt-3 pt-3 border-t border-white/5 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <div class="flex justify-between text-[11px] text-zinc-400 mb-1">
-              <label for="zoomRange">Görsel Yakınlaştırma</label>
+              <label for="zoomRange">Image Zoom</label>
               <span id="zoomValueLabel" class="text-zinc-200 font-semibold">100%</span>
             </div>
             <input id="zoomRange" type="range" min="100" max="220" value="100" class="w-full h-1.5 bg-zinc-800 rounded-lg cursor-pointer" />
           </div>
           <div>
             <div class="flex justify-between text-[11px] text-zinc-400 mb-1">
-              <label for="overlayRange">Alt Karartma (Okunabilirlik)</label>
+              <label for="overlayRange">Bottom Overlay</label>
               <span id="overlayValueLabel" class="text-zinc-200 font-semibold">85%</span>
             </div>
             <input id="overlayRange" type="range" min="40" max="100" value="85" class="w-full h-1.5 bg-zinc-800 rounded-lg cursor-pointer" />
@@ -156,46 +153,36 @@
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
             <span class="w-6 h-6 rounded-full bg-[#FFC300] text-black font-extrabold text-xs flex items-center justify-center">2</span>
-            <h2 class="text-sm font-bold uppercase tracking-wider text-white">Haber Yazısı</h2>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-white">News Story</h2>
           </div>
           <button id="btnClearText" type="button" class="text-[11px] text-zinc-400 hover:text-white transition">
-            Yazıyı Temizle
+            Clear Text
           </button>
         </div>
 
         <!-- Kategori Etiketi Seçimi -->
         <div class="mb-3">
-          <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Kategori Etiketi (Üst Kutu)</label>
+          <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Story Category</label>
           <div class="flex flex-wrap gap-1.5 mb-2">
-            <button type="button" data-badge="SON DAKİKA" data-color="#E11D2E" class="badge-preset px-2.5 py-1 rounded-md text-[11px] font-extrabold bg-[#E11D2E] text-white tracking-wide">
-              SON DAKİKA
-            </button>
-            <button type="button" data-badge="ŞEHİR YAŞAMI" data-color="#FFC300" class="badge-preset px-2.5 py-1 rounded-md text-[11px] font-extrabold bg-[#FFC300] text-black tracking-wide">
-              ŞEHİR YAŞAMI
-            </button>
-            <button type="button" data-badge="ULAŞIM" data-color="#2563EB" class="badge-preset px-2.5 py-1 rounded-md text-[11px] font-extrabold bg-[#2563EB] text-white tracking-wide">
-              ULAŞIM
-            </button>
-            <button type="button" data-badge="ANALİZ" data-color="#1D4ED8" class="badge-preset px-2.5 py-1 rounded-md text-[11px] font-extrabold bg-[#1D4ED8] text-white tracking-wide">
-              ANALİZ
-            </button>
-            <button type="button" data-badge="BREAKING" data-color="#E11D2E" class="badge-preset px-2.5 py-1 rounded-md text-[11px] font-extrabold bg-zinc-800 text-zinc-200 border border-white/10">
-              BREAKING
-            </button>
-            <button type="button" data-badge="CITY LIFE" data-color="#FFC300" class="badge-preset px-2.5 py-1 rounded-md text-[11px] font-extrabold bg-zinc-800 text-zinc-200 border border-white/10">
-              CITY LIFE
-            </button>
+            <button type="button" data-badge="BREAKING" data-color="#E11D2E" class="badge-preset px-2.5 py-1.5 rounded-md text-[11px] font-extrabold bg-zinc-800 text-zinc-100 border border-white/10 hover:border-[#FFC300] transition">BREAKING</button>
+            <button type="button" data-badge="TRANSIT" data-color="#2563EB" class="badge-preset px-2.5 py-1.5 rounded-md text-[11px] font-extrabold bg-zinc-800 text-zinc-100 border border-white/10 hover:border-[#FFC300] transition">TRANSIT</button>
+            <button type="button" data-badge="POLITICS" data-color="#16A34A" class="badge-preset px-2.5 py-1.5 rounded-md text-[11px] font-extrabold bg-zinc-800 text-zinc-100 border border-white/10 hover:border-[#FFC300] transition">POLITICS</button>
+            <button type="button" data-badge="PUBLIC SAFETY" data-color="#E11D2E" class="badge-preset px-2.5 py-1.5 rounded-md text-[11px] font-extrabold bg-zinc-800 text-zinc-100 border border-white/10 hover:border-[#FFC300] transition">PUBLIC SAFETY</button>
+            <button type="button" data-badge="HOUSING" data-color="#8B5CF6" class="badge-preset px-2.5 py-1.5 rounded-md text-[11px] font-extrabold bg-zinc-800 text-zinc-100 border border-white/10 hover:border-[#FFC300] transition">HOUSING</button>
+            <button type="button" data-badge="CITY LIFE" data-color="#FFC300" class="badge-preset px-2.5 py-1.5 rounded-md text-[11px] font-extrabold bg-zinc-800 text-zinc-100 border border-white/10 hover:border-[#FFC300] transition">CITY LIFE</button>
+            <button type="button" data-badge="WEATHER" data-color="#0EA5E9" class="badge-preset px-2.5 py-1.5 rounded-md text-[11px] font-extrabold bg-zinc-800 text-zinc-100 border border-white/10 hover:border-[#FFC300] transition">WEATHER</button>
+            <button type="button" data-badge="BUSINESS" data-color="#F59E0B" class="badge-preset px-2.5 py-1.5 rounded-md text-[11px] font-extrabold bg-zinc-800 text-zinc-100 border border-white/10 hover:border-[#FFC300] transition">BUSINESS</button>
           </div>
 
           <div class="flex items-center gap-2">
-            <input id="badgeTextInput" type="text" value="SON DAKİKA" placeholder="Etiket yazısı (örn: SON DAKİKA)" class="flex-1 bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-xs font-bold text-white uppercase tracking-wider focus:outline-none focus:border-[#FFC300]" />
+            <input id="badgeTextInput" type="text" value="NYC NEWS" placeholder="Category label (e.g. BREAKING)" class="flex-1 bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-xs font-bold text-white uppercase tracking-wider focus:outline-none focus:border-[#FFC300]" />
             <!-- Şablon Renk Paleti -->
-            <div class="flex items-center gap-1 bg-zinc-900 border border-white/10 rounded-lg px-2 py-1.5" title="Etiket Rengi">
-              <button type="button" data-pick-color="#E11D2E" class="color-swatch w-5 h-5 rounded bg-[#E11D2E] ring-2 ring-white" aria-label="Kırmızı"></button>
-              <button type="button" data-pick-color="#FFC300" class="color-swatch w-5 h-5 rounded bg-[#FFC300]" aria-label="Sarı"></button>
-              <button type="button" data-pick-color="#2563EB" class="color-swatch w-5 h-5 rounded bg-[#2563EB]" aria-label="Mavi"></button>
-              <button type="button" data-pick-color="#0B0B0B" class="color-swatch w-5 h-5 rounded bg-[#0B0B0B] border border-white/30" aria-label="Siyah"></button>
-              <button type="button" data-pick-color="#E5E5E5" class="color-swatch w-5 h-5 rounded bg-[#E5E5E5]" aria-label="Beyaz/Gri"></button>
+            <div class="flex items-center gap-1 bg-zinc-900 border border-white/10 rounded-lg px-2 py-1.5" title="Category Color">
+              <button type="button" data-pick-color="#E11D2E" class="color-swatch w-5 h-5 rounded bg-[#E11D2E] ring-2 ring-white" aria-label="Red"></button>
+              <button type="button" data-pick-color="#FFC300" class="color-swatch w-5 h-5 rounded bg-[#FFC300]" aria-label="Yellow"></button>
+              <button type="button" data-pick-color="#2563EB" class="color-swatch w-5 h-5 rounded bg-[#2563EB]" aria-label="Blue"></button>
+              <button type="button" data-pick-color="#0B0B0B" class="color-swatch w-5 h-5 rounded bg-[#0B0B0B] border border-white/30" aria-label="Black"></button>
+              <button type="button" data-pick-color="#E5E5E5" class="color-swatch w-5 h-5 rounded bg-[#E5E5E5]" aria-label="White/Gray"></button>
             </div>
           </div>
         </div>
@@ -203,19 +190,19 @@
         <!-- Ana Başlık (Headline) -->
         <div class="mb-3">
           <div class="flex items-center justify-between mb-1">
-            <label for="headlineInput" class="text-xs font-semibold text-zinc-300">Haber Başlığı (Manşet)</label>
+            <label for="headlineInput" class="text-xs font-semibold text-zinc-300">Headline</label>
             <div class="flex items-center gap-2">
-              <span class="text-[11px] text-zinc-400">Boyut:</span>
+              <span class="text-[11px] text-zinc-400">Size:</span>
               <input id="titleSizeRange" type="range" min="44" max="76" value="60" class="w-20 h-1.5 bg-zinc-800 rounded-lg cursor-pointer" />
             </div>
           </div>
-          <textarea id="headlineInput" rows="2" placeholder="Haberin çarpıcı ana başlığını buraya yazın..." class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm font-bold text-white placeholder-zinc-500 focus:outline-none focus:border-[#FFC300] resize-y">Metro Hatlarında Sabah Saatlerinde Sinyalizasyon Gecikmesi</textarea>
+          <textarea id="headlineInput" rows="2" placeholder="Enter a clear, accurate news headline..." class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm font-bold text-white placeholder-zinc-500 focus:outline-none focus:border-[#FFC300] resize-y">Your New York story starts here</textarea>
         </div>
 
         <!-- Alt Açıklama / Haber Özeti -->
         <div>
-          <label for="summaryInput" class="block text-xs font-semibold text-zinc-300 mb-1">Haber Detayı / Alt Metin</label>
-          <textarea id="summaryInput" rows="3" placeholder="Haberin kısa özetini veya alt açıklamasını buraya ekleyin..." class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-[#FFC300] resize-y">Ana aktarma istasyonlarında yaşanan sinyal arızası nedeniyle sabah seferlerinde 15 dakikaya varan gecikmeler yaşanıyor. Ekiplerin müdahalesi sürüyor.</textarea>
+          <label for="summaryInput" class="block text-xs font-semibold text-zinc-300 mb-1">Story Summary</label>
+          <textarea id="summaryInput" rows="3" placeholder="Add the key facts and context..." class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-[#FFC300] resize-y">Paste a verified NYC article URL or write your own report.</textarea>
         </div>
       </div>
 
@@ -224,58 +211,57 @@
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
             <span class="w-6 h-6 rounded-full bg-[#FFC300] text-black font-extrabold text-xs flex items-center justify-center">3</span>
-            <h2 class="text-sm font-bold uppercase tracking-wider text-white">Tarih • Saat • Bölge</h2>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-white">Date · Time · Borough</h2>
           </div>
           <button id="btnSetNow" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#FFC300]/15 text-[#FFC300] hover:bg-[#FFC300]/25 border border-[#FFC300]/30 transition flex items-center gap-1">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            Şimdiye Ayarla
+            Set NYC Time
           </button>
         </div>
 
         <!-- Bölge / Konum -->
         <div class="mb-3">
-          <label for="regionInput" class="block text-xs font-semibold text-zinc-300 mb-1">Bölge / Konum</label>
+          <label for="regionInput" class="block text-xs font-semibold text-zinc-300 mb-1">Borough / Location</label>
           <div class="relative">
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#E11D2E]">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
             </span>
-            <input id="regionInput" type="text" value="İSTANBUL" placeholder="Örn: İSTANBUL, KADIKÖY, MANHATTAN..." class="w-full bg-zinc-900 border border-white/15 rounded-xl pl-9 pr-3 py-2 text-xs sm:text-sm font-bold text-white uppercase tracking-wider focus:outline-none focus:border-[#FFC300]" />
+            <input id="regionInput" type="text" value="NEW YORK CITY" placeholder="e.g. MANHATTAN, BROOKLYN, QUEENS..." class="w-full bg-zinc-900 border border-white/15 rounded-xl pl-9 pr-3 py-2 text-xs sm:text-sm font-bold text-white uppercase tracking-wider focus:outline-none focus:border-[#FFC300]" />
           </div>
           <!-- Hızlı Bölge Çipleri -->
-          <div class="flex flex-wrap gap-1.5 mt-2">
-            <button type="button" data-region="İSTANBUL" class="region-chip px-2 py-0.5 rounded text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300">İSTANBUL</button>
-            <button type="button" data-region="ANKARA" class="region-chip px-2 py-0.5 rounded text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300">ANKARA</button>
-            <button type="button" data-region="İZMİR" class="region-chip px-2 py-0.5 rounded text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300">İZMİR</button>
-            <button type="button" data-region="TÜRKİYE GENELİ" class="region-chip px-2 py-0.5 rounded text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300">TÜRKİYE GENELİ</button>
-            <button type="button" data-region="MANHATTAN" class="region-chip px-2 py-0.5 rounded text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300">MANHATTAN</button>
-            <button type="button" data-region="NEW YORK CITY" class="region-chip px-2 py-0.5 rounded text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300">NEW YORK CITY</button>
+          <div class="flex flex-wrap gap-1.5 mt-2" role="group" aria-label="New York City boroughs">
+            <button type="button" data-region="NEW YORK CITY" class="region-chip px-2.5 py-1.5 rounded-md text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-200">NEW YORK CITY</button>
+            <button type="button" data-region="MANHATTAN" class="region-chip px-2.5 py-1.5 rounded-md text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-200">MANHATTAN</button>
+            <button type="button" data-region="BROOKLYN" class="region-chip px-2.5 py-1.5 rounded-md text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-200">BROOKLYN</button>
+            <button type="button" data-region="QUEENS" class="region-chip px-2.5 py-1.5 rounded-md text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-200">QUEENS</button>
+            <button type="button" data-region="BRONX" class="region-chip px-2.5 py-1.5 rounded-md text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-200">BRONX</button>
+            <button type="button" data-region="STATEN ISLAND" class="region-chip px-2.5 py-1.5 rounded-md text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-200">STATEN ISLAND</button>
           </div>
         </div>
 
         <!-- Tarih ve Saat Seçiciler -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label for="dateInput" class="block text-xs font-semibold text-zinc-300 mb-1">Tarih</label>
-            <input id="dateInput" type="date" value="2026-10-23" class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold text-white focus:outline-none focus:border-[#FFC300]" />
+            <label for="dateInput" class="block text-xs font-semibold text-zinc-300 mb-1">Date</label>
+            <input id="dateInput" type="date" lang="en-US" value="2026-10-23" class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold text-white focus:outline-none focus:border-[#FFC300]" />
           </div>
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label for="timeInput" class="text-xs font-semibold text-zinc-300">Saat</label>
+              <label for="timeInput" class="text-xs font-semibold text-zinc-300">Time</label>
               <label class="inline-flex items-center gap-1.5 text-[11px] text-zinc-400 cursor-pointer">
                 <input id="showTimeToggle" type="checkbox" checked class="rounded accent-[#FFC300]" />
-                <span>Saati Göster</span>
+                <span>Show Time</span>
               </label>
             </div>
-            <input id="timeInput" type="time" value="13:35" class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold text-white focus:outline-none focus:border-[#FFC300]" />
+            <input id="timeInput" type="time" lang="en-US" value="13:35" class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold text-white focus:outline-none focus:border-[#FFC300]" />
           </div>
         </div>
 
         <!-- Tarih Dili / Özel Tarih Metni -->
         <div class="mt-3 pt-3 border-t border-white/5 flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-2">
-            <span class="text-[11px] text-zinc-400">Tarih Formatı:</span>
-            <button id="btnDateLangTR" type="button" class="px-2 py-0.5 rounded text-[11px] font-bold bg-[#FFC300] text-black">Türkçe (23 EKİ 2026)</button>
-            <button id="btnDateLangEN" type="button" class="px-2 py-0.5 rounded text-[11px] font-semibold bg-zinc-800 text-zinc-300">English (OCT 23, 2026)</button>
+            <span class="text-[11px] text-zinc-400">Date Format:</span>
+            <span id="tonyFormattedDate" class="text-xs font-bold text-[#FFC300]">OCT 23, 2026 · ET</span><span class="text-[10px] text-zinc-400">(America/New_York)</span>
           </div>
         </div>
       </div>
@@ -285,18 +271,18 @@
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
             <span class="w-6 h-6 rounded-full bg-zinc-800 text-[#FFC300] border border-[#FFC300]/40 font-extrabold text-xs flex items-center justify-center">4</span>
-            <h2 class="text-sm font-bold uppercase tracking-wider text-white">Logo & Şablon Ayarı</h2>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-white">Brand & Layout</h2>
           </div>
           <span class="text-[11px] text-zinc-400">TONY. Stili</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
           <div>
-            <label for="brandTitleInput" class="block text-xs font-semibold text-zinc-300 mb-1">Sol Üst Logo Metni</label>
+            <label for="brandTitleInput" class="block text-xs font-semibold text-zinc-300 mb-1">Brand Wordmark</label>
             <input id="brandTitleInput" type="text" value="TONY." placeholder="TONY." class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3 py-2 text-xs font-extrabold text-[#FFC300] uppercase focus:outline-none focus:border-[#FFC300]" />
           </div>
           <div>
-            <label for="brandSubInput" class="block text-xs font-semibold text-zinc-300 mb-1">Logo Alt Başlığı</label>
+            <label for="brandSubInput" class="block text-xs font-semibold text-zinc-300 mb-1">Brand Tagline</label>
             <input id="brandSubInput" type="text" value="THE ONLY NEW YORK" placeholder="THE ONLY NEW YORK" class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3 py-2 text-xs font-semibold text-white uppercase tracking-wider focus:outline-none focus:border-[#FFC300]" />
           </div>
         </div>
@@ -305,16 +291,16 @@
           <div class="flex items-center gap-3">
             <label class="inline-flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer">
               <input id="toggleCarouselIcon" type="checkbox" checked class="rounded accent-[#FFC300]" />
-              <span>Sağ Üst Karusel İkonu</span>
+              <span>Carousel Icon</span>
             </label>
             <label class="inline-flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer">
               <input id="toggleBookmarkIcon" type="checkbox" checked class="rounded accent-[#FFC300]" />
-              <span>Sağ Alt Kaydet İkonu</span>
+              <span>Bookmark Icon</span>
             </label>
           </div>
           <div class="flex items-center gap-1">
-            <button id="btnRatioSquare" type="button" class="px-2.5 py-1 rounded text-[11px] font-bold bg-[#FFC300] text-black">1:1 Kare</button>
-            <button id="btnRatioPortrait" type="button" class="px-2.5 py-1 rounded text-[11px] font-semibold bg-zinc-800 text-zinc-300">4:5 Dikey</button>
+            <button id="btnRatioSquare" type="button" class="px-2.5 py-1 rounded text-[11px] font-bold bg-[#FFC300] text-black">1:1 Square</button>
+            <button id="btnRatioPortrait" type="button" class="px-2.5 py-1 rounded text-[11px] font-semibold bg-zinc-800 text-zinc-300">4:5 Portrait</button>
           </div>
         </div>
       </div>
@@ -329,10 +315,10 @@
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <h2 class="text-sm font-bold uppercase tracking-wider text-white">Canlı Yayın Önizlemesi</h2>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-white">Live Preview</h2>
             <span id="canvasResolutionBadge" class="text-[11px] text-zinc-400 font-mono">1080 × 1080 px</span>
           </div>
-          <span class="text-[11px] text-zinc-400">İpucu: Görseli kaydırmak için önizleme üzerinde sürükleyin</span>
+          <span class="text-[11px] text-zinc-400">Drag the photo to adjust framing</span>
         </div>
 
         <!-- CANLI CANVAS SARICI -->
@@ -346,17 +332,17 @@
         <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <button id="btnDownloadPNG" type="button" class="sm:col-span-1 py-3 px-4 rounded-xl font-extrabold text-xs sm:text-sm bg-[#FFC300] text-black hover:bg-[#ffd033] transition flex items-center justify-center gap-2 shadow-lg shadow-[#FFC300]/10">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-            Görseli İndir (PNG)
+            Download PNG
           </button>
 
           <button id="btnPublishToGrid" type="button" class="sm:col-span-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm bg-[#E11D2E] text-white hover:bg-[#f0283a] transition flex items-center justify-center gap-2 shadow-lg shadow-[#E11D2E]/15">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4"/></svg>
-            Yerel Akışa Ekle
+            Add to Draft Grid
           </button>
 
           <button id="btnCopyCaption" type="button" class="sm:col-span-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm bg-zinc-800 text-white hover:bg-zinc-700 border border-white/10 transition flex items-center justify-center gap-2">
             <svg class="w-4 h-4 text-[#FFC300]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-            Paylaşım Metnini Kopyala
+            Copy Caption
           </button>
         </div>
       </div>
@@ -366,13 +352,13 @@
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div>
             <h3 class="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-              Yayın Akışı & Instagram Grid Önizlemesi
-              <span id="postCountBadge" class="text-[11px] px-2 py-0.5 rounded-full bg-zinc-800 text-[#FFC300] font-bold">0 Gönderi</span>
+              Local Drafts & Instagram Grid
+              <span id="postCountBadge" class="text-[11px] px-2 py-0.5 rounded-full bg-zinc-800 text-[#FFC300] font-bold">0 Posts</span>
             </h3>
-            <p class="text-xs text-zinc-400">Oluşturduğun haberler burada sıralanır. Herhangi bir habere tıklayarak düzenleyebilir veya indirebilirsin.</p>
+            <p class="text-xs text-zinc-400">Saved drafts appear here. Tap a story to edit or download it. This is not a live Instagram feed.</p>
           </div>
           <button id="btnResetFeed" type="button" class="text-xs text-zinc-400 hover:text-white underline">
-            Yerel Akışı Temizle
+            Clear Draft Grid
           </button>
         </div>
 
@@ -389,8 +375,8 @@
     <div class="bg-[#141419] border border-white/15 rounded-2xl max-w-3xl w-full p-4 sm:p-6 shadow-2xl">
       <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
         <div>
-          <h3 class="text-base font-bold text-white">TONY. Haber Şablonu Tasarım Rehberi</h3>
-          <p class="text-xs text-zinc-400">Yüklediğiniz referans görsel ve renk/tipografi sistemi</p>
+          <h3 class="text-base font-bold text-white">TONY. News Graphic Design Guide</h3>
+          <p class="text-xs text-zinc-400">Reference graphic, brand colors and typography</p>
         </div>
         <button id="btnCloseRefModal" type="button" class="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center">
           ✕
@@ -415,7 +401,7 @@
   <!-- BİLDİRİM TOAST -->
   <div id="toastBox" class="fixed bottom-5 right-5 z-50 pointer-events-none opacity-0 translate-y-2 transition-all duration-200 bg-[#18181f] border border-[#FFC300]/50 text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 text-xs font-semibold">
     <span class="w-2 h-2 rounded-full bg-[#FFC300]"></span>
-    <span id="toastMessage">İşlem tamamlandı</span>
+    <span id="toastMessage">Done</span>
   </div>
 
   <!-- GÖMÜLÜ ÖRNEK GÖRSELLER (CANVAS İÇİN) -->
@@ -425,15 +411,15 @@
   <script>
     // --- UYGULAMA DURUMU (STATE) ---
     const state = {
-      badgeText: 'SON DAKİKA',
-      badgeColor: '#E11D2E',
-      headline: 'Metro Hatlarında Sabah Saatlerinde Sinyalizasyon Gecikmesi',
-      summary: 'Ana aktarma istasyonlarında yaşanan sinyal arızası nedeniyle sabah seferlerinde 15 dakikaya varan gecikmeler yaşanıyor. Ekiplerin müdahalesi sürüyor.',
-      region: 'İSTANBUL',
+      badgeText: 'NYC NEWS',
+      badgeColor: '#FFC300',
+      headline: 'Your New York story starts here',
+      summary: 'Paste a verified NYC article URL or write your own report.',
+      region: 'NEW YORK CITY',
       dateValue: '2026-10-23',
       timeValue: '13:35',
       showTime: true,
-      dateLang: 'TR', // 'TR' veya 'EN'
+      dateLang: 'EN', // US English only
       brandTitle: 'TONY.',
       brandSub: 'THE ONLY NEW YORK',
       showCarouselIcon: true,
@@ -450,7 +436,6 @@
       feedPosts: []
     };
 
-    const MONTHS_TR = ['OCA', 'ŞUB', 'MAR', 'NİS', 'MAY', 'HAZ', 'TEM', 'AĞU', 'EYL', 'EKİ', 'KAS', 'ARA'];
     const MONTHS_EN = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
     // --- DOM ELEMANLARI ---
@@ -505,16 +490,16 @@
         const year = parts[0];
         const monthIdx = Math.max(0, Math.min(11, parseInt(parts[1], 10) - 1));
         const day = parseInt(parts[2], 10);
-        if (state.dateLang === 'EN') {
-          dateStr = `${MONTHS_EN[monthIdx]} ${day}, ${year}`;
-        } else {
-          dateStr = `${day} ${MONTHS_TR[monthIdx]} ${year}`;
+        dateStr = `${MONTHS_EN[monthIdx]} ${day}, ${year}`;
+      }
+      if (state.showTime && /^\\d{2}:\\d{2}$/.test(state.timeValue || '')) {
+        const [h, m] = state.timeValue.split(':').map(Number);
+        if (h <= 23 && m <= 59) {
+          const clock = `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`;
+          return `${dateStr} · ${clock} ET`;
         }
       }
-      if (state.showTime && state.timeValue) {
-        return `${dateStr} • ${state.timeValue}`;
-      }
-      return dateStr;
+      return `${dateStr} · ET`;
     }
 
     // --- YARDIMCI: YUVARLATILMIŞ DİKDÖRTGEN ---
@@ -558,6 +543,8 @@
 
     // --- ANA ŞABLON ÇİZİM MOTORU (TONY. BİREBİR ŞABLON) ---
     function renderCanvas() {
+      const dateLabel = document.getElementById('tonyFormattedDate');
+      if (dateLabel) dateLabel.textContent = formatDateTimeDisplay();
       const W = 1080;
       const H = state.aspectRatio === '4:5' ? 1350 : 1080;
       if (canvas.width !== W || canvas.height !== H) {
@@ -683,7 +670,7 @@
       ctx.fill();
 
       // Bölge Metni
-      const regionText = (state.region || 'İSTANBUL').trim().toUpperCase();
+      const regionText = (state.region || 'NEW YORK CITY').trim().toUpperCase();
       ctx.fillStyle = '#E5E5E5';
       ctx.font = '700 22px Inter, sans-serif';
       if ('letterSpacing' in ctx) ctx.letterSpacing = '1.2px';
@@ -762,7 +749,7 @@
         cursorY = sumStartY - 36;
       }
 
-      // 7b. Ana Haber Başlığı (Manşet)
+      // 7b. Ana Headline
       const headlineText = (state.headline || '').trim();
       const titleFontSize = parseInt(titleSizeRange.value, 10) || 60;
       ctx.font = `800 ${titleFontSize}px Inter, sans-serif`;
@@ -843,7 +830,7 @@
             const file = item.getAsFile();
             if (file) {
               loadUserImageFile(file);
-              showToast('Panodaki görsel şablona eklendi');
+              showToast('Photo pasted into the design');
             }
           }
         }
@@ -854,18 +841,18 @@
         state.activeImage = preloadMetroImg;
         resetCropState();
         renderCanvas();
-        showToast('Metro / Ulaşım görseli yüklendi');
+        showToast('NYC Subway görseli yüklendi');
       });
       document.getElementById('btnSampleSkyline').addEventListener('click', () => {
         state.activeImage = preloadSkylineImg;
         resetCropState();
         renderCanvas();
-        showToast('Şehir manzarası görseli yüklendi');
+        showToast('NYC skyline sample loaded');
       });
       document.getElementById('btnResetCrop').addEventListener('click', () => {
         resetCropState();
         renderCanvas();
-        showToast('Görsel kadrajı sıfırlandı');
+        showToast('Image crop reset');
       });
 
       // Zoom & Karartma
@@ -904,7 +891,7 @@
       // Kategori hazır butonları
       document.querySelectorAll('.badge-preset').forEach((btn) => {
         btn.addEventListener('click', () => {
-          state.badgeText = btn.getAttribute('data-badge') || 'SON DAKİKA';
+          state.badgeText = btn.getAttribute('data-badge') || 'BREAKING';
           state.badgeColor = btn.getAttribute('data-color') || '#E11D2E';
           badgeTextInput.value = state.badgeText;
           highlightSelectedSwatch(state.badgeColor);
@@ -954,7 +941,7 @@
       });
       document.querySelectorAll('.region-chip').forEach((chip) => {
         chip.addEventListener('click', () => {
-          const r = chip.getAttribute('data-region') || 'İSTANBUL';
+          const r = chip.getAttribute('data-region') || 'NEW YORK CITY';
           state.region = r;
           regionInput.value = r;
           renderCanvas();
@@ -973,7 +960,7 @@
         renderCanvas();
       });
 
-      // "Şimdiye Ayarla" butonu
+      // "Set NYC Time" butonu
       document.getElementById('btnSetNow').addEventListener('click', () => {
         const nycNow = window.TONYNewsroom
           ? window.TONYNewsroom.nyTime()
@@ -983,23 +970,7 @@
         dateInput.value = state.dateValue;
         timeInput.value = state.timeValue;
         renderCanvas();
-        showToast('New York yerel saati ayarlandı');
-      });
-
-      // Tarih dili TR / EN
-      const btnDateLangTR = document.getElementById('btnDateLangTR');
-      const btnDateLangEN = document.getElementById('btnDateLangEN');
-      btnDateLangTR.addEventListener('click', () => {
-        state.dateLang = 'TR';
-        btnDateLangTR.className = 'px-2 py-0.5 rounded text-[11px] font-bold bg-[#FFC300] text-black';
-        btnDateLangEN.className = 'px-2 py-0.5 rounded text-[11px] font-semibold bg-zinc-800 text-zinc-300';
-        renderCanvas();
-      });
-      btnDateLangEN.addEventListener('click', () => {
-        state.dateLang = 'EN';
-        btnDateLangEN.className = 'px-2 py-0.5 rounded text-[11px] font-bold bg-[#FFC300] text-black';
-        btnDateLangTR.className = 'px-2 py-0.5 rounded text-[11px] font-semibold bg-zinc-800 text-zinc-300';
-        renderCanvas();
+        showToast('New York local time applied');
       });
 
       // Marka & İkon Kontrolleri
@@ -1039,19 +1010,6 @@
       });
 
       // Üst Bar Hazır Şablon Modları (TR / EN)
-      document.getElementById('btnPresetTR').addEventListener('click', () => {
-        applyPreset({
-          badgeText: 'SON DAKİKA',
-          badgeColor: '#E11D2E',
-          headline: 'Metro Hatlarında Sabah Saatlerinde Sinyalizasyon Gecikmesi',
-          summary: 'Ana aktarma istasyonlarında yaşanan sinyal arızası nedeniyle sabah seferlerinde 15 dakikaya varan gecikmeler yaşanıyor. Ekiplerin müdahalesi sürüyor.',
-          region: 'İSTANBUL',
-          dateLang: 'TR',
-          img: preloadMetroImg
-        });
-        showToast('Türkçe haber şablonu yüklendi');
-      });
-
       document.getElementById('btnPresetEN').addEventListener('click', () => {
         applyPreset({
           badgeText: 'BREAKING',
@@ -1062,7 +1020,7 @@
           dateLang: 'EN',
           img: preloadMetroImg
         });
-        showToast('TONY. (NYC) orijinal şablon örneği yüklendi');
+        showToast('NYC demo template loaded');
       });
 
       // İndir, Akışa Ekle, Kopyala
@@ -1071,7 +1029,7 @@
       document.getElementById('btnCopyCaption').addEventListener('click', copyCaptionToClipboard);
       document.getElementById('btnResetFeed').addEventListener('click', () => {
         seedInitialFeed();
-        showToast('Yerel taslak akışı temizlendi');
+        showToast('Local draft grid cleared');
       });
 
       // Rehber Modal
@@ -1116,7 +1074,7 @@
           state.activeImage = img;
           resetCropState();
           renderCanvas();
-          showToast('Görsel şablona uygulandı');
+          showToast('Photo applied to design');
         };
         img.src = ev.target.result;
       };
@@ -1138,15 +1096,7 @@
       regionInput.value = state.region;
       highlightSelectedSwatch(state.badgeColor);
 
-      const btnDateLangTR = document.getElementById('btnDateLangTR');
-      const btnDateLangEN = document.getElementById('btnDateLangEN');
-      if (state.dateLang === 'EN') {
-        btnDateLangEN.className = 'px-2 py-0.5 rounded text-[11px] font-bold bg-[#FFC300] text-black';
-        btnDateLangTR.className = 'px-2 py-0.5 rounded text-[11px] font-semibold bg-zinc-800 text-zinc-300';
-      } else {
-        btnDateLangTR.className = 'px-2 py-0.5 rounded text-[11px] font-bold bg-[#FFC300] text-black';
-        btnDateLangEN.className = 'px-2 py-0.5 rounded text-[11px] font-semibold bg-zinc-800 text-zinc-300';
-      }
+      state.dateLang = 'EN'; // TONY operates exclusively in US English.
       resetCropState();
       renderCanvas();
     }
@@ -1155,18 +1105,18 @@
     function downloadCurrentPNG() {
       renderCanvas();
       const dataUrl = canvas.toDataURL('image/png');
-      const slug = (state.headline || 'haber-yayini')
+      const slug = (state.headline || 'nyc-news')
         .toLowerCase()
-        .replace(/[^a-z0-9ğüşıöç]+/g, '-')
+        .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '')
-        .slice(0, 40) || 'haber';
+        .slice(0, 40) || 'news';
       const link = document.createElement('a');
-      link.download = `${slug}-${state.dateValue || 'yayin'}.png`;
+      link.download = `${slug}-${state.dateValue || 'post'}.png`;
       link.href = dataUrl;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast('Yüksek çözünürlüklü PNG indirildi');
+      showToast('Full-resolution PNG downloaded');
     }
 
     // --- SOSYAL MEDYA METNİ KOPYALAMA ---
@@ -1179,9 +1129,9 @@
       ta.select();
       try {
         document.execCommand('copy');
-        showToast('Haber paylaşım metni panoya kopyalandı');
+        showToast('Caption copied to clipboard');
       } catch (err) {
-        showToast('Kopyalama tamamlandı');
+        showToast('Caption copied');
       }
       document.body.removeChild(ta);
     }
@@ -1212,21 +1162,21 @@
       state.feedPosts.unshift(postObj);
       if (window.TONYNewsroom) window.TONYNewsroom.captureFeedPreview();
       renderFeedGrid();
-      showToast('Gönderi yerel taslak akışına eklendi');
+      showToast('Story added to local drafts');
     }
 
     function renderFeedGrid() {
-      postCountBadge.textContent = `${state.feedPosts.length} Gönderi`;
+      postCountBadge.textContent = `${state.feedPosts.length} Posts`;
       feedGridContainer.innerHTML = '';
 
       state.feedPosts.forEach((post) => {
         const card = document.createElement('div');
         card.className = 'group relative rounded-xl overflow-hidden bg-zinc-900 border border-white/10 hover:border-[#FFC300] transition shadow-md flex flex-col';
 
-        const statusLabels = {draft:'Taslak',review:'İncelemede',ready:'Yayına Hazır',published:'Instagram’da Yayımlandı'};
+        const statusLabels = {draft:'Draft',review:'In Review',ready:'Ready',published:'Published on Instagram'};
         const statusLine = document.createElement('div');
         statusLine.className = 'px-2 py-1.5 text-[10px] text-zinc-300 font-semibold bg-zinc-950';
-        statusLine.textContent = statusLabels[post.publicationStatus] || 'Taslak';
+        statusLine.textContent = statusLabels[post.publicationStatus] || 'Draft';
 
         const imgWrap = document.createElement('div');
         imgWrap.className = 'relative aspect-square w-full bg-black overflow-hidden cursor-pointer';
@@ -1243,7 +1193,7 @@
         const editBtn = document.createElement('button');
         editBtn.type = 'button';
         editBtn.className = 'px-2.5 py-1.5 rounded-lg bg-[#FFC300] text-black font-bold text-[11px] hover:bg-[#ffd033]';
-        editBtn.textContent = 'Düzenle';
+        editBtn.textContent = 'Edit';
         editBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           loadPostIntoEditor(post);
@@ -1252,11 +1202,11 @@
         const dlBtn = document.createElement('button');
         dlBtn.type = 'button';
         dlBtn.className = 'px-2.5 py-1.5 rounded-lg bg-white/15 text-white font-semibold text-[11px] hover:bg-white/25';
-        dlBtn.textContent = 'İndir';
+        dlBtn.textContent = 'Download';
         dlBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           const a = document.createElement('a');
-          a.download = `haber-${post.id}.jpg`;
+          a.download = `tony-${post.id}.jpg`;
           a.href = post.previewUrl;
           document.body.appendChild(a);
           a.click();
@@ -1266,13 +1216,13 @@
         const delBtn = document.createElement('button');
         delBtn.type = 'button';
         delBtn.className = 'px-2 py-1.5 rounded-lg bg-[#E11D2E]/80 text-white font-bold text-[11px] hover:bg-[#E11D2E]';
-        delBtn.textContent = 'Sil';
+        delBtn.textContent = 'Delete';
         delBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           state.feedPosts = state.feedPosts.filter((p) => p.id !== post.id);
           if (window.TONYNewsroom) window.TONYNewsroom.persistFeed();
           renderFeedGrid();
-          showToast('Gönderi akıştan kaldırıldı');
+          showToast('Draft removed');
         });
 
         overlay.appendChild(editBtn);
@@ -1295,7 +1245,7 @@
       state.region = post.region;
       state.dateValue = post.dateValue;
       state.timeValue = post.timeValue;
-      state.dateLang = post.dateLang || 'TR';
+      state.dateLang = 'EN';
       if (post.imageRef) state.activeImage = post.imageRef;
       state.sourceUrl = post.sourceUrl || '';
       state.sourceName = post.sourceName || '';
@@ -1313,7 +1263,7 @@
       timeInput.value = state.timeValue;
       highlightSelectedSwatch(state.badgeColor);
       renderCanvas();
-      showToast('Haber düzenleyiciye yüklendi');
+      showToast('Story loaded into editor');
     }
 
     // --- BAŞLANGIÇ ÖRNEK AKIŞI ---
