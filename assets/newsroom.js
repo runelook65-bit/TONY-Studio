@@ -73,7 +73,7 @@
       '<div class="flex flex-wrap gap-2">' +
       '<button type="button" id="tonySaveDraft" class="grow px-3 py-2.5 rounded-xl bg-[#FFC300] text-black text-xs font-black">Save Draft</button>' +
       '<button type="button" id="tonyLoadDraft" class="grow px-3 py-2.5 rounded-xl bg-zinc-800 text-white text-xs font-semibold">Restore Draft</button></div>' +
-      '<p id="tonyDraftMessage" role="status" aria-live="polite" class="text-[11px] text-zinc-400">Draftlar ve akış bu tarayıcıda saklanır, hesaplar arasında eşitlenmez.</p></div>';
+      '<p id="tonyDraftMessage" role="status" aria-live="polite" class="text-[11px] text-zinc-400">Drafts are stored in this browser and are not synchronized across devices.</p></div>';
     section.insertBefore(panel, section.firstChild);
     $('tonyFetchArticle').addEventListener('click', fetchArticle);
     $('tonyArticleUrl').addEventListener('keydown', e => { if (e.key === 'Enter') fetchArticle(); });
@@ -97,7 +97,7 @@
     if (next === 'ready' && (!app.state.sourceUrl || app.state.verificationStatus === 'needs-review' || app.state.imagePermission === 'unknown')) {
       next = 'review';
       $('tonyPublicationStatus').value = 'review';
-      $('tonyDraftMessage').textContent = 'Ready to Publish için kaynak, haber doğrulaması ve görsel hakkı kontrolü gerekli.';
+      $('tonyDraftMessage').textContent = 'Ready to Publish requires an article source, verification and image rights review.';
     }
     app.state.publicationStatus = next;
   }
@@ -139,7 +139,7 @@
         thumb.classList.add('hidden');
       }
       $('tonyArticlePreview').classList.remove('hidden');
-      info('Draft bulundu. İkinci kaynak ve görsel kullanım hakları editör kontrolü gerektirir.', false);
+      info('Draft imported. Verify the article and photo rights before publishing.', false);
     } catch(e) {
       currentArticle = null;
       info(e.message || 'Import failed. Enter article details manually.', true);
@@ -189,7 +189,7 @@
     try {
       syncEditorial();
       localStorage.setItem(KEY_DRAFT, JSON.stringify(serializeCurrent()));
-      $('tonyDraftMessage').textContent = 'Draft bu cihazda kaydedildi. Görsel dosyası ayrıca saklanmaz.';
+      $('tonyDraftMessage').textContent = 'Draft saved on this device. Uploaded photos are not saved.';
       window.TONYStudio.showToast('News draft saved');
     } catch {
       $('tonyDraftMessage').textContent = 'Browser storage is unavailable or full. Could not save draft.';
@@ -209,8 +209,8 @@
       app.state.sourcePublishedAt=d.sourcePublishedAt || null;
       setEditorial(d);
       app.renderCanvas();
-      $('tonyDraftMessage').textContent = 'Draft geri yüklendi. Fotoğraf gerekiyorsa yeniden yükle.';
-      app.showToast('Draft yüklendi');
+      $('tonyDraftMessage').textContent = 'Draft restored. Re-upload the photo if needed.';
+      app.showToast('Draft loaded');
     } catch { $('tonyDraftMessage').textContent = 'Could not read saved draft.'; }
   }
   function compactPreview(dataUrl) {
