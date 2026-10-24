@@ -83,7 +83,7 @@ test('editorial ZIP contains source and per-slide photo credits in a readable si
   media.putImage(id,{naturalWidth:2000,naturalHeight:2000});
   state.carouselSlides[0].imagePermission='licensed';
   state.carouselSlides[0].imageCredit='Jane Doe, CC BY 4.0';
-  const notes=carousel.buildEditorialNotes(state);
+  const notes=carousel.buildEditorialNotes(state,media);
   assert.match(notes,/TONY - THE ONLY NEW YORK/);
   assert.match(notes,/Page 2 image credit: Jane Doe, CC BY 4\.0/);
   assert.match(notes,/Article: https:\/\/www\.nyc\.gov/);
