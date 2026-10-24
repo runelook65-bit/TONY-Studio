@@ -76,7 +76,8 @@
     for (const byte of bytes) crc = CRC_TABLE[(crc ^ byte) & 255] ^ (crc >>> 8);
     return (crc ^ 0xffffffff) >>> 0;
   }
-  function buildEditorialNotes(state) {
+  function buildEditorialNotes(state, registry) {
+    registry = registry || (typeof window !== 'undefined' ? window.TONYCarouselMedia : null);
     const clean = value => String(value ?? '').replace(/[\r\n\t]+/g,' ').slice(0,300);
     const notes = [
       'TONY - THE ONLY NEW YORK | CAROUSEL IMAGE CREDITS',
@@ -88,7 +89,7 @@
     const pages=pagesFromState(state);
     for(let i=1;i<pages.length;i++){
       const slide=pages[i];
-      const hasPhoto=Boolean(window.TONYCarouselMedia?.getImage(slide.id));
+      const hasPhoto=Boolean(registry?.getImage(slide.id));
       notes.push('Page '+(i+1)+': '+(hasPhoto?'independent image':'reuses cover image'));
       if(hasPhoto){
         notes.push('Page '+(i+1)+' image rights: '+clean(slide.imagePermission));
@@ -267,25 +268,23 @@
       exportSlide:app.state._tonyExportSlide
     };
     try {
-      const files = [];
-      // Keep canvas state coherent across awaits; Instagram actions are not invoked.
-      for (let i = 0; i < pages.length; i++) {
-        // Clone the painted canvas synchronously. The main editor is restored
-        // before the async PNG encoder starts, so publishing cannot see a
-        // temporary carousel headline or slide marker.
-        const pageCanvas = withPage(app, i, pages.length, canvas => {
-          const copy = document.createElement('canvas');
-          copy.width = canvas.width;
-          copy.height = canvas.height;
-          const ctx = copy.getContext('2d');
-          if (!ctx) throw Error('Canvas unavailable for carousel export.');
-          ctx.drawImage(canvas, 0, 0);
-          return copy;
-        });
-        setStatus('Exporting page ' + (i + 1) + ' of ' + pages.length + '…');
-        files.push({bytes: await toPngBytes(pageCanvas)});
+      // Freeze every slide while the state is synchronous. Awaiting toBlob
+      // between canvas paints could otherwise mix text/images from revisions.
+      const notes=buildEditorialNotes(app.state);
+      const canvases=pages.map((page,i)=>withPage(app,i,pages.length, canvas=>{
+        const copy=document.createElement('canvas');
+        copy.width=canvas.width;copy.height=canvas.height;
+        const ctx=copy.getContext('2d');
+        if(!ctx)throw Error('Canvas unavailable for carousel export.');
+        ctx.drawImage(canvas,0,0);
+        return copy;
+      }));
+      const files=[];
+      for(let i=0;i<canvases.length;i++){
+        setStatus('Encoding page '+(i+1)+' of '+canvases.length+'…');
+        files.push({bytes:await toPngBytes(canvases[i])});
       }
-      const archive = zipPngFiles(files, buildEditorialNotes(app.state));
+      const archive = zipPngFiles(files, notes);
       const url = URL.createObjectURL(new Blob([archive], {type:'application/zip'}));
       const link = document.createElement('a');
       link.href = url;
