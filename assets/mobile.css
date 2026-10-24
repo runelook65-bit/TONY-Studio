@@ -214,3 +214,35 @@
   .tony-mobile-tabs > button,
   .tony-mobile-advanced-toggle > span:last-child { transition: none; }
 }
+
+
+/* TONY brand mark + NYC photo grading; shared by mobile and desktop. */
+.tony-photo-effects .tony-filter-grid {
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+}
+.tony-filter-choice{
+  border:1px solid #36363e;background:#1b1b21;color:#d4d4d8;
+  border-radius:10px;padding:10px 8px;min-height:42px;
+  font-size:12px;font-weight:750;text-align:center;line-height:1.25;
+  transition:background .12s,border-color .12s,color .12s;
+}
+.tony-filter-choice:hover{border-color:#a18319;color:#fff}
+.tony-filter-choice.tony-filter-active,
+.tony-filter-choice[aria-pressed="true"]{
+  background:#ffc300;border-color:#ffc300;color:#0b0b0b;
+}
+.tony-brand-switch #tonyLogoSizeRow[hidden],
+#tonyWordmarkFields[hidden]{display:none !important}
+.tony-photo-effects input[type="range"],.tony-brand-switch input[type="range"]{
+  min-height:34px;accent-color:#ffc300;cursor:pointer;
+}
+.tony-brand-switch select{appearance:auto;color-scheme:dark}
+@media(min-width:560px){
+ .tony-photo-effects .tony-filter-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:767px){
+ .tony-photo-effects .tony-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .tony-filter-choice{min-height:46px;font-size:12px}
+ .tony-brand-switch select{font-size:16px !important;min-height:44px}
+ .tony-brand-switch {margin-bottom:12px}
+}

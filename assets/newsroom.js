@@ -182,6 +182,8 @@
       verificationStatus:s.verificationStatus || 'needs-review',
       imagePermission:s.imagePermission || 'unknown',imageCredit:s.imageCredit || '',
       publicationStatus:s.publicationStatus || 'draft',
+      photoFilter:s.photoFilter || 'gotham',filterIntensity:s.filterIntensity ?? 70,
+      brandLogoMode:s.brandLogoMode || 'logo',brandLogoSize:s.brandLogoSize || 120,
       savedAt:new Date().toISOString()
     };
   }
@@ -208,6 +210,11 @@
       app.state.sourceName=d.sourceName || '';
       app.state.sourcePublishedAt=d.sourcePublishedAt || null;
       setEditorial(d);
+      app.state.photoFilter = d.photoFilter || 'gotham';
+      app.state.filterIntensity = d.filterIntensity ?? 70;
+      app.state.brandLogoMode = d.brandLogoMode || 'logo';
+      app.state.brandLogoSize = d.brandLogoSize || 120;
+      window.TONYEffects?.syncControls();
       app.renderCanvas();
       $('tonyDraftMessage').textContent = 'Draft restored. Re-upload the photo if needed.';
       app.showToast('Draft loaded');
@@ -239,6 +246,8 @@
         verificationStatus:p.verificationStatus || 'needs-review',
         imagePermission:p.imagePermission || 'unknown',imageCredit:p.imageCredit || '',
         publicationStatus:p.publicationStatus || 'draft',
+        photoFilter:p.photoFilter || 'gotham',filterIntensity:p.filterIntensity ?? 70,
+        brandLogoMode:p.brandLogoMode || 'logo',brandLogoSize:p.brandLogoSize || 120,
         previewUrl: p.previewUrl && p.previewUrl.length < 85000 ? p.previewUrl : ''
       }));
       localStorage.setItem(KEY_FEED,JSON.stringify(posts));
