@@ -176,6 +176,7 @@
     const s = window.TONYStudio.state;
     return {
       badgeText:s.badgeText,badgeColor:s.badgeColor,headline:s.headline,summary:s.summary,
+      autoFitHeadline:s.autoFitHeadline !== false,
       region:s.region,dateValue:s.dateValue,timeValue:s.timeValue,dateLang:s.dateLang,
       sourceUrl:s.sourceUrl || '',sourceName:s.sourceName || '',
       sourcePublishedAt:s.sourcePublishedAt || null,
@@ -219,6 +220,7 @@
       app.state.photoLicense = '';
       const copyrightStatus = $('tonyImagePermission');
       if (copyrightStatus) { copyrightStatus.value = 'unknown'; copyrightStatus.dispatchEvent(new Event('change')); }
+      app.state.autoFitHeadline = d.autoFitHeadline !== false;
       app.state.photoFilter = d.photoFilter || 'gotham';
       app.state.filterIntensity = d.filterIntensity ?? 70;
       app.state.brandLogoMode = d.brandLogoMode || 'logo';

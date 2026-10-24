@@ -417,6 +417,7 @@
       badgeColor: '#FFC300',
       headline: 'Your New York story starts here',
       summary: 'Paste a verified NYC article URL or write your own report.',
+      autoFitHeadline: true,
       region: 'NEW YORK CITY',
       dateValue: '2026-10-23',
       timeValue: '13:35',
@@ -529,6 +530,7 @@
 
     // --- YARDIMCI: ÇOK SATIRLI METİN SARMA ---
     function wrapLines(context, text, maxWidth) {
+      if (window.TONYTypography) return window.TONYTypography.wrapLines(context, text, maxWidth);
       if (!text) return [];
       const paragraphs = text.split('\n');
       const lines = [];
@@ -773,12 +775,16 @@
 
       // 7a. Haber Özeti / Alt Açıklama
       ctx.save();
+      let summaryOverflow = false;
       const summaryText = (state.summary || '').trim();
       if (summaryText) {
         ctx.font = '500 31px Inter, sans-serif';
         ctx.fillStyle = '#E5E5E5';
         ctx.textBaseline = 'alphabetic';
-        const sumLines = wrapLines(ctx, summaryText, contentMaxWidth).slice(0, 4);
+        const allSumLines = wrapLines(ctx, summaryText, contentMaxWidth);
+        const sumLines = allSumLines.slice(0, 4);
+        summaryOverflow = allSumLines.length > 4;
+        if (summaryOverflow && window.TONYTypography) sumLines[3] = window.TONYTypography.ellipsize(ctx, sumLines[3], contentMaxWidth);
         const sumLineHeight = 42;
         const totalSumHeight = sumLines.length * sumLineHeight;
         let sumStartY = cursorY - totalSumHeight + 30;
@@ -790,11 +796,17 @@
 
       // 7b. Ana Headline
       const headlineText = (state.headline || '').trim();
-      const titleFontSize = parseInt(titleSizeRange.value, 10) || 60;
+      const requestedTitleSize = parseInt(titleSizeRange.value, 10) || 60;
+      const titleLayout = window.TONYTypography ? window.TONYTypography.fitHeadline(ctx, headlineText, {
+        width: contentMaxWidth, bottom: cursorY, safeTop: 225, maxLines: 5,
+        preferredSize: requestedTitleSize, auto: state.autoFitHeadline !== false
+      }) : null;
+      const titleFontSize = titleLayout?.fontSize ?? requestedTitleSize;
       ctx.font = `800 ${titleFontSize}px Inter, sans-serif`;
       ctx.fillStyle = '#FFFFFF';
       ctx.textBaseline = 'alphabetic';
-      const headLines = wrapLines(ctx, headlineText, contentMaxWidth).slice(0, 5);
+      const headLines = titleLayout ? titleLayout.lines : wrapLines(ctx, headlineText, contentMaxWidth).slice(0, 5);
+      window.TONYTypography?.reportLayout({headline:titleLayout, summaryOverflow, auto:state.autoFitHeadline!==false});
       const headLineHeight = Math.round(titleFontSize * 1.13);
       const totalHeadHeight = headLines.length * headLineHeight;
       let headStartY = cursorY - totalHeadHeight + titleFontSize * 0.78;
@@ -962,6 +974,7 @@
         renderCanvas();
       });
       titleSizeRange.addEventListener('input', () => {
+        state.autoFitHeadline = false;
         renderCanvas();
       });
       summaryInput.addEventListener('input', () => {
@@ -1135,6 +1148,7 @@
       state.badgeColor = preset.badgeColor;
       state.headline = preset.headline;
       state.summary = preset.summary;
+      state.autoFitHeadline = true;
       state.region = preset.region;
       state.dateLang = 'EN';
       if (preset.img) state.activeImage = preset.img;
@@ -1195,6 +1209,7 @@
         badgeColor: state.badgeColor,
         headline: state.headline,
         summary: state.summary,
+        autoFitHeadline: state.autoFitHeadline !== false,
         region: state.region,
         dateValue: state.dateValue,
         timeValue: state.timeValue,
@@ -1299,6 +1314,7 @@
       state.badgeColor = post.badgeColor;
       state.headline = post.headline;
       state.summary = post.summary;
+      state.autoFitHeadline = post.autoFitHeadline !== false;
       state.region = post.region;
       state.dateValue = post.dateValue;
       state.timeValue = post.timeValue;
@@ -1376,6 +1392,7 @@
   <script src="/assets/newsroom.js" defer></script>
   <script src="/assets/instagram.js" defer></script>
   <script src="/assets/editor-effects.js?v=1" defer></script>
+  <script src="/assets/smart-typography.js?v=1" defer></script>
   <script src="/assets/visual-intelligence.js?v=1" defer></script>
   <script src="/assets/mobile.js?v=1" defer></script>
 </body>
