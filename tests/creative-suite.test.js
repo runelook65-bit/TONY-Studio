@@ -129,7 +129,7 @@ test('actual editor and draft paths wire layouts, photo focus, carousel and orig
   assert.match(index,/window\.TONYCreative\?\.paintFrame/);
   assert.match(index,/carouselSlides: window\.TONYCarousel\?\.normalizeSlides/);
   assert.match(index,/state\.carouselSlides = \[\]/);
-  assert.match(newsroom,/carouselSlides:window\.TONYCarousel\?\.normalizeSlides/);
+  assert.match(newsroom,/carouselSlides:window\.TONYCarousel\?\.serializeSlides/);
   assert.match(newsroom,/app\.state\.carouselSlides = window\.TONYCarousel\?\.normalizeSlides/);
   assert.match(index,/window\.TONYTypography\.fitHeadline/);
 });
