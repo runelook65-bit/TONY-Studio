@@ -1,0 +1,99 @@
+name: REA public UX evidence (no deployments)
+
+on:
+  push:
+    branches:
+      - research/rea-canva-buffer
+    paths:
+      - .github/workflows/rea-public-ux.yml
+      - REA_BENCHMARK.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public-ux-observation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      REA_BROWSER_OBSERVE_ENABLED: "true"
+      REA_BROWSER_CDP_ENDPOINTS_JSON: '["http://127.0.0.1:9222"]'
+      REA_BROWSER_ALLOWED_ORIGINS_JSON: '["https://www.canva.com","https://buffer.com","https://support.buffer.com"]'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+      - name: Install official REA CLI
+        run: |
+          npm install --global rea-agents@latest --no-audit --no-fund
+          rea --version
+      - name: Capture public Chrome browser evidence
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p rea-evidence
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          if [ -z "$CHROME" ]; then echo 'Chromium unavailable' | tee rea-evidence/blocker.txt; exit 1; fi
+          "$CHROME" --headless=new --no-sandbox --disable-dev-shm-usage \
+            --no-first-run --no-default-browser-check --disable-extensions \
+            --remote-debugging-address=127.0.0.1 --remote-debugging-port=9222 \
+            --user-data-dir="$RUNNER_TEMP/rea-public-browser" \
+            --window-size=1365,900 \
+            "https://www.canva.com/photo-editor/" \
+            "https://www.canva.com/help/image-editor/" \
+            "https://buffer.com/publish/" \
+            "https://support.buffer.com/articles/managing-and-approving-draft-posts-57li7M8tDA" \
+            >rea-evidence/chrome.log 2>&1 &
+          CHROME_PID=$!
+          trap 'kill "$CHROME_PID" 2>/dev/null || true' EXIT
+          for n in $(seq 1 25); do
+            curl --max-time 3 --silent --fail "http://127.0.0.1:9222/json/list" -o rea-evidence/cdp-targets.json && break
+            sleep 2
+          done
+          if [ ! -s rea-evidence/cdp-targets.json ]; then echo 'CDP startup failed'; exit 1; fi
+          sleep 12
+          curl --max-time 3 --silent --fail "http://127.0.0.1:9222/json/list" -o rea-evidence/cdp-targets.json
+          rea list-browser-targets http://127.0.0.1:9222 --approved --json \
+            > rea-evidence/rea-discovery.json 2> rea-evidence/rea-discovery.log || true
+          echo '# REA public UX evidence' >> "$GITHUB_STEP_SUMMARY"
+          echo '| Page | Captured | Observed URL |' >> "$GITHUB_STEP_SUMMARY"
+          echo '|---|---|---|' >> "$GITHUB_STEP_SUMMARY"
+          SUCCESS=0
+          while IFS='|' read -r LABEL MATCH; do
+            ID="$(jq -r --arg match "$MATCH" \
+              '[.[] | select(.type=="page" and (.url | contains($match)))] | first | .id // empty' \
+              rea-evidence/cdp-targets.json)"
+            if [ -z "$ID" ]; then
+              printf 'unavailable: no page on allowed origin\n' > "rea-evidence/$LABEL.error.txt"
+              echo "| $LABEL | unavailable | no target |" >> "$GITHUB_STEP_SUMMARY"
+              continue
+            fi
+            URL="$(jq -r --arg id "$ID" '.[] | select(.id==$id) | .url' rea-evidence/cdp-targets.json)"
+            if rea inspect-web-page http://127.0.0.1:9222 "$ID" --approved --json \
+                  > "rea-evidence/$LABEL.json" 2> "rea-evidence/$LABEL.error.txt"; then
+              echo "| $LABEL | yes | $URL |" >> "$GITHUB_STEP_SUMMARY"
+              SUCCESS=$((SUCCESS+1))
+            else
+              echo "| $LABEL | failed | $URL |" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done <<'PUBLIC_PAGES'
+          canva-editor|www.canva.com/photo-editor
+          canva-help|www.canva.com/help/image-editor
+          buffer-publish|buffer.com/publish
+          buffer-help|support.buffer.com/articles/managing-and-approving-draft-posts
+          PUBLIC_PAGES
+          echo "Captures: $SUCCESS / 4" | tee rea-evidence/count.txt
+          echo "REA observations are passive and do not establish behavior behind login." >> "$GITHUB_STEP_SUMMARY"
+          test "$SUCCESS" -gt 0
+      - name: Preserve REA evidence and blockers
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: rea-public-ux-evidence
+          path: rea-evidence/
+          if-no-files-found: warn
+          retention-days: 7
