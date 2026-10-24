@@ -70,7 +70,7 @@
     updateFilterControls();updateLogoControls();
   }
   function addFilterPanel(){
-    const photoSection=$('dropZone')?.closest('div.bg-\\[\\#121216\\]');
+    const photoSection=$('dropZone')?.parentElement;
     if(!photoSection || $('tonyFilterPanel'))return;
     const panel=document.createElement('div');
     panel.id='tonyFilterPanel';
@@ -105,7 +105,7 @@
     });
   }
   function addLogoPanel(){
-    const brandSection=$('brandTitleInput')?.closest('div.bg-\\[\\#121216\\]');
+    const brandSection=$('brandTitleInput')?.closest('div.grid')?.parentElement;
     if(!brandSection || $('tonyLogoMode'))return;
     const field=$('brandTitleInput')?.closest('div.grid');
     if(field)field.id='tonyWordmarkFields';
