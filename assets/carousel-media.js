@@ -40,6 +40,10 @@
     if (state.activeImage && state.photoKind === 'ai' && state.imagePermission !== 'ai-generated') {
       return 'Mark the AI-generated cover as an AI illustration before exporting.';
     }
+    if (state.activeImage && state.imagePermission === 'licensed' &&
+        !String(state.imageCredit || state.photoSourceCredit || '').trim()) {
+      return 'Add a photographer or license credit for the cover photo.';
+    }
     for (let i = 0; i < (state.carouselSlides || []).length; i++) {
       const slide = state.carouselSlides[i];
       if (!getImage(slide.id)) continue;
