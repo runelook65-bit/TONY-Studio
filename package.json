@@ -5,7 +5,7 @@
   "description": "TONY NYC news design and Instagram publishing",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "check": "node --check lib/instagram.js && node --check api/instagram/access.js && node --check api/instagram/connect.js && node --check api/instagram/callback.js && node --check api/instagram/publish.js && node --check assets/instagram.js && node --check assets/newsroom.js && node --check assets/mobile.js && node --check assets/editor-effects.js && node --check assets/smart-typography.js && node --check assets/creative-suite.js && node --check assets/carousel-studio.js && node --check assets/carousel-media.js && node --check lib/visual.js && node --check api/visual/access.js && node --check api/visual/search.js && node --check api/visual/import.js && node --check api/visual/generate.js && node --check assets/visual-intelligence.js"
+    "check": "node --check lib/instagram.js && node --check api/instagram/access.js && node --check api/instagram/connect.js && node --check api/instagram/callback.js && node --check api/instagram/publish.js && node --check assets/instagram.js && node --check assets/newsroom.js && node --check assets/mobile.js && node --check assets/editor-effects.js && node --check assets/smart-typography.js && node --check assets/creative-suite.js && node --check assets/carousel-studio.js && node --check assets/carousel-media.js && node --check assets/editorial-gate.js && node --check lib/visual.js && node --check api/visual/access.js && node --check api/visual/search.js && node --check api/visual/import.js && node --check api/visual/generate.js && node --check assets/visual-intelligence.js"
   },
   "dependencies": {
     "@vercel/blob": "2.8.2"

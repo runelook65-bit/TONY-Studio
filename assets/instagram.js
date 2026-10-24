@@ -100,6 +100,8 @@
  async function publish(){
   if(publishing||!connected)return;
   const s=window.TONYStudio.state;
+  const issues=window.TONYEditorialGate?.assess(s);
+  if(issues?.length)return message(issues[0].message+' Editorial review is required.','error');
   if(s.publicationStatus!=='ready')return message('Editorial status must be Ready to Publish.','error');
   if(!s.sourceUrl||!['cross-checked','official-source'].includes(s.verificationStatus))
    return message('A source URL and completed source verification are required.','error');

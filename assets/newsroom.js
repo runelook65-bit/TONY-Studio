@@ -94,12 +94,16 @@
     app.state.imagePermission = $('tonyImagePermission').value;
     app.state.imageCredit = $('tonyImageCredit').value.trim();
     let next = $('tonyPublicationStatus').value;
-    if (next === 'ready' && (!app.state.sourceUrl || app.state.verificationStatus === 'needs-review' || app.state.imagePermission === 'unknown')) {
+    const blockers = window.TONYEditorialGate?.assess(app.state);
+    if (next === 'ready' && (blockers ? blockers.length > 0 :
+        (!app.state.sourceUrl || app.state.verificationStatus === 'needs-review' || app.state.imagePermission === 'unknown'))) {
       next = 'review';
       $('tonyPublicationStatus').value = 'review';
-      $('tonyDraftMessage').textContent = 'Ready to Publish requires an article source, verification and image rights review.';
+      $('tonyDraftMessage').textContent = blockers?.[0]?.message ||
+        'Ready to Publish requires an article source, verification and image rights review.';
     }
     app.state.publicationStatus = next;
+    window.TONYEditorialGate?.syncControls();
   }
   function setEditorial(post) {
     $('tonySourceUrl').value = post.sourceUrl || '';
