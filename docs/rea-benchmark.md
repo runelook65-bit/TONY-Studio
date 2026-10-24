@@ -53,3 +53,33 @@ These are documented UX/product behaviors. They are **not verified by logged-in 
 - Research branch: `research/rea-canva-buffer` (derived from `feat/creative-suite-carousel`).
 - No merges to `main`, no Instagram auto-posts, no production / preview Vercel deployments until user specifically says **yayınla**.
 - A completed official REA browser capture must preserve its Evidence and limitations before runtime behavior can be claimed.
+
+
+## F. Completed REA CDP captures (2026-10-24 UTC)
+
+Run: https://github.com/runelook65-bit/TONY-Studio/actions/runs/40135511761
+Evidence archive (7-day retention): https://github.com/runelook65-bit/TONY-Studio/actions/runs/40135511761/artifacts/12575844182
+
+The third GitHub Actions run successfully installed **rea-agents 6.7.0**, started a dedicated headless **Chrome 155** browser, and recorded **four authentic REA Evidence v2 objects**. No credentials were supplied or login restrictions bypassed. Numbers below come from the REA normalized_result records.
+
+| Page | Observed title | DOM nodes | Accessibility nodes | Scripts | Evidence ID |
+| --- | --- | ---: | ---: | ---: | --- |
+| Canva photo editor | Just a moment... | 152 | 34 | 4 | ev_2d4c4fce7b3b149c1953c8b7a51b69fd4cfc5303c22667e2c24f611b02f01589 |
+| Canva help | Just a moment... | 152 | 34 | 4 | ev_88b84cc011043ab3c511afd95e1292d11872432e96384da4b7ca45dacea91261 |
+| Buffer /publish | Social Media Scheduler & Planner for Everyone | 4081 | 2182 | 47 | ev_669894635687b85ef285a2ba3003cfa0d644839dee4319c5fe8d501465b0382d |
+| Buffer approval help | Help Center - Managing and approving draft posts | 2175 | 1080 | 48 | ev_5243638ac3cbc09098d91dd9163e1a82da0cc1df1e7096656494b435a5b8ecfd |
+
+### Limits of these observations
+
+- **Canva**: Only Cloudflare's Just a moment security gate was observed. Canva's editor DOM, layers and cropping implementation were **not** accessible. Canva feature descriptions elsewhere in this document are supported by vendor Help Center material, NOT REA analysis of the protected editor.
+- **Buffer**: Public landing and support-page structures were inspected; this does **not** establish the authenticated Buffer publisher's internal state or network APIs.
+- **Network**: All four observations recorded zero requests in the short capture window. This does NOT mean those pages made no network requests; the REA reports explicitly state that network activity before attachment is unavailable.
+- **Privacy**: No cookies, login tokens, headers, body contents, source scripts or storage values were requested or retained. Script counts are metadata inventory values, not retrieved source code.
+
+A valid REA workflow is now reproducible. Authenticated editor interaction reverse engineering remains unverified without an authorized active browser session.
+
+## G. Buffer-inspired original TONY implementation
+
+The research branch adds a TONY Editorial Preflight checklist with local review and explicit approval. It checks valid HTTPS source, source cross-checking, non-demo news copy, cover-photo availability, rights and credit, and AI illustration disclosure. If a check becomes invalid, an earlier local Ready status can be revoked. The Instagram single-image publisher now invokes the shared preflight before its existing confirmation and Meta API request.
+
+This is an original local newsroom workflow inspired by Buffer's *publicly documented* draft/approval distinction. It is not a live Buffer integration, a team permissions backend, a scheduler, or an automatic carousel publisher.
