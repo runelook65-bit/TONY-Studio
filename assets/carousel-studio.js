@@ -198,12 +198,20 @@
       const files = [];
       // Keep canvas state coherent across awaits; Instagram actions are not invoked.
       for (let i = 0; i < pages.length; i++) {
-        app.state.headline = pages[i].headline;
-        app.state.summary = pages[i].summary;
-        app.state._tonyExportSlide = {index:i + 1,total:pages.length};
-        app.renderCanvas();
+        // Clone the painted canvas synchronously. The main editor is restored
+        // before the async PNG encoder starts, so publishing cannot see a
+        // temporary carousel headline or slide marker.
+        const pageCanvas = withPage(app, i, pages.length, canvas => {
+          const copy = document.createElement('canvas');
+          copy.width = canvas.width;
+          copy.height = canvas.height;
+          const ctx = copy.getContext('2d');
+          if (!ctx) throw Error('Canvas unavailable for carousel export.');
+          ctx.drawImage(canvas, 0, 0);
+          return copy;
+        });
         setStatus('Exporting page ' + (i + 1) + ' of ' + pages.length + '…');
-        files.push({bytes: await toPngBytes(app.canvas)});
+        files.push({bytes: await toPngBytes(pageCanvas)});
       }
       const archive = zipPngFiles(files);
       const url = URL.createObjectURL(new Blob([archive], {type:'application/zip'}));
