@@ -267,3 +267,76 @@
 @media(min-width:1000px){
  .tony-visual-panel .tony-visual-results{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
+
+
+/* TONY Carousel Studio: touch-safe slide navigation and per-slide media review. */
+#tonyCarouselPanel {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+#tonyCarouselPages {
+  scrollbar-width: thin;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+#tonyCarouselPages > button {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  min-height: 43px;
+  touch-action: manipulation;
+}
+#tonyCarouselPanel button:focus-visible,
+#tonyCarouselPanel input:focus-visible,
+#tonyCarouselPanel textarea:focus-visible,
+#tonyCarouselPanel select:focus-visible {
+  outline: 2px solid #ffc300;
+  outline-offset: 2px;
+}
+#tonyCarouselPanel button:disabled {
+  opacity: .42;
+  cursor: not-allowed;
+}
+#tonyCarouselEditor[hidden],
+#tonyCarouselMediaPanel[hidden],
+#tonyCarouselCoverNote[hidden] {
+  display: none !important;
+}
+#tonyCarouselMediaPanel input[type="file"] {
+  max-width: 100%;
+  color-scheme: dark;
+}
+#tonyCarouselMediaPanel select,
+#tonyCarouselMediaPanel input[type="text"] {
+  color-scheme: dark;
+}
+#tonyCarouselPreview {
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background: #070707;
+  max-height: 420px;
+}
+@media (max-width: 767px) {
+  #tonyCarouselPanel {
+    padding-top: 16px;
+    width: 100%;
+  }
+  #tonyCarouselPages > button,
+  #tonyCarouselPanel button:not([data-tony-tab]) {
+    min-height: 44px;
+  }
+  #tonyCarouselEditor textarea,
+  #tonyCarouselMediaPanel select,
+  #tonyCarouselMediaPanel input[type="text"] {
+    font-size: 16px !important;
+    min-height: 44px;
+  }
+  #tonyCarouselMediaPanel input[type="file"] {
+    font-size: 13px !important;
+  }
+  #tonyCarouselPanel #tonyCarouselPreview {
+    width: min(68vw, 290px);
+  }
+  #tonyCarouselPanel input[type="range"] {
+    min-height: 38px;
+  }
+}

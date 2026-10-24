@@ -432,6 +432,10 @@
       overlayStrength: 85,
       photoFilter: 'gotham',
       filterIntensity: 70,
+      layoutVariant: 'classic',
+      focusX: 50,
+      focusY: 50,
+      carouselSlides: [],
       brandLogoMode: 'logo',
       brandLogoSize: 120,
       panX: 0,
@@ -571,12 +575,15 @@
       // 2. Arka Plan Görseli (Cover + Zoom + Pan)
       const img = state.activeImage;
       if (img && img.complete && img.naturalWidth > 0) {
-        const scaleBase = Math.max(W / img.naturalWidth, H / img.naturalHeight);
-        const scale = scaleBase * (state.zoom / 100);
-        const drawW = img.naturalWidth * scale;
-        const drawH = img.naturalHeight * scale;
-        const drawX = (W - drawW) / 2 + state.panX;
-        const drawY = (H - drawH) / 2 + state.panY;
+        const crop = window.TONYCreative?.photoPlacement(
+          img.naturalWidth, img.naturalHeight, W, H,
+          state.zoom, state.focusX, state.focusY, state.panX, state.panY
+        );
+        const scale = Math.max(W / img.naturalWidth, H / img.naturalHeight) * (state.zoom / 100);
+        const drawW = crop?.width ?? img.naturalWidth * scale;
+        const drawH = crop?.height ?? img.naturalHeight * scale;
+        const drawX = crop?.x ?? (W - drawW) / 2 + state.panX;
+        const drawY = crop?.y ?? (H - drawH) / 2 + state.panY;
         if (window.TONYEffects) {
           window.TONYEffects.drawPhoto(ctx, img, drawX, drawY, drawW, drawH, state.photoFilter, state.filterIntensity);
         } else {
@@ -606,6 +613,7 @@
       botGrad.addColorStop(1, `rgba(11, 11, 11, ${Math.min(1, 0.98 * strength + 0.02).toFixed(2)})`);
       ctx.fillStyle = botGrad;
       ctx.fillRect(0, H * 0.28, W, H * 0.72);
+      window.TONYCreative?.paintFrame(ctx, state, W, H);
 
       const padX = 64;
 
@@ -925,16 +933,18 @@
       // Tuval Üzerinde Sürükleyerek Görsel Kaydırma (Pan)
       canvas.addEventListener('pointerdown', (e) => {
         state.isDragging = true;
-        state.dragStartX = e.clientX - state.panX;
-        state.dragStartY = e.clientY - state.panY;
+        state.dragStartX = e.clientX;
+        state.dragStartY = e.clientY;
+        state.dragOriginX = state.panX;
+        state.dragOriginY = state.panY;
         canvas.setPointerCapture(e.pointerId);
       });
       canvas.addEventListener('pointermove', (e) => {
         if (!state.isDragging) return;
         const rect = canvas.getBoundingClientRect();
         const ratio = canvas.width / Math.max(1, rect.width);
-        state.panX = (e.clientX - state.dragStartX) * ratio * 0.55;
-        state.panY = (e.clientY - state.dragStartY) * ratio * 0.55;
+        state.panX = state.dragOriginX + (e.clientX - state.dragStartX) * ratio;
+        state.panY = state.dragOriginY + (e.clientY - state.dragStartY) * ratio;
         renderCanvas();
       });
       ['pointerup', 'pointercancel'].forEach((evt) => {
@@ -1118,6 +1128,9 @@
       state.zoom = 100;
       state.panX = 0;
       state.panY = 0;
+      state.focusX = 50;
+      state.focusY = 50;
+      window.TONYCreative?.syncControls();
       zoomRange.value = '100';
       zoomValueLabel.textContent = '100%';
     }
@@ -1149,6 +1162,10 @@
       state.headline = preset.headline;
       state.summary = preset.summary;
       state.autoFitHeadline = true;
+      // A new story must not inherit another article's carousel pages.
+      state.carouselSlides = [];
+      window.TONYCarouselMedia?.clear();
+      window.TONYCarousel?.syncControls();
       state.region = preset.region;
       state.dateLang = 'EN';
       if (preset.img) state.activeImage = preset.img;
@@ -1224,6 +1241,10 @@
         publicationStatus: state.publicationStatus || 'draft',
         photoFilter: state.photoFilter || 'gotham',
         filterIntensity: state.filterIntensity ?? 70,
+        layoutVariant: state.layoutVariant || 'classic',
+        focusX: state.focusX ?? 50,
+        focusY: state.focusY ?? 50,
+        carouselSlides: window.TONYCarousel?.normalizeSlides(state.carouselSlides) || [],
         brandLogoMode: state.brandLogoMode || 'logo',
         brandLogoSize: state.brandLogoSize || 120,
         photoKind: state.photoKind || 'manual',
@@ -1310,6 +1331,9 @@
     }
 
     function loadPostIntoEditor(post) {
+      // Grid previews do not persist uploaded carousel media. Start with a
+      // clean in-memory registry to prevent cross-article photo inheritance.
+      window.TONYCarouselMedia?.clear();
       state.badgeText = post.badgeText;
       state.badgeColor = post.badgeColor;
       state.headline = post.headline;
@@ -1328,6 +1352,13 @@
       state.publicationStatus = post.publicationStatus || 'draft';
       state.photoFilter = post.photoFilter || 'gotham';
       state.filterIntensity = post.filterIntensity ?? 70;
+      state.layoutVariant = post.layoutVariant || 'classic';
+      state.focusX = post.imageRef ? (post.focusX ?? 50) : 50;
+      state.focusY = post.imageRef ? (post.focusY ?? 50) : 50;
+      state.carouselSlides = window.TONYCarousel?.normalizeSlides(post.carouselSlides) || [];
+      state.panX = state.panY = 0;
+      window.TONYCreative?.syncControls();
+      window.TONYCarousel?.syncControls();
       state.brandLogoMode = post.brandLogoMode || 'logo';
       state.brandLogoSize = post.brandLogoSize || 120;
       state.photoKind = post.imageRef ? (post.photoKind || 'manual') : 'manual';
@@ -1393,6 +1424,9 @@
   <script src="/assets/instagram.js" defer></script>
   <script src="/assets/editor-effects.js?v=1" defer></script>
   <script src="/assets/smart-typography.js?v=1" defer></script>
+  <script src="/assets/creative-suite.js?v=1" defer></script>
+  <script src="/assets/carousel-studio.js?v=1" defer></script>
+  <script src="/assets/carousel-media.js?v=1" defer></script>
   <script src="/assets/visual-intelligence.js?v=1" defer></script>
   <script src="/assets/mobile.js?v=1" defer></script>
 </body>
