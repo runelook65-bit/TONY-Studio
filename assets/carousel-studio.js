@@ -76,20 +76,49 @@
     for (const byte of bytes) crc = CRC_TABLE[(crc ^ byte) & 255] ^ (crc >>> 8);
     return (crc ^ 0xffffffff) >>> 0;
   }
-  function zipPngFiles(files) {
+  function buildEditorialNotes(state) {
+    const clean = value => String(value ?? '').replace(/[\r\n\t]+/g,' ').slice(0,300);
+    const notes = [
+      'TONY - THE ONLY NEW YORK | CAROUSEL IMAGE CREDITS',
+      'Article: ' + clean(state.sourceUrl),
+      'Verification: ' + clean(state.verificationStatus),
+      'Cover image rights: ' + clean(state.imagePermission),
+      'Cover credit: ' + clean(state.imageCredit || state.photoSourceCredit || 'not provided')
+    ];
+    const pages=pagesFromState(state);
+    for(let i=1;i<pages.length;i++){
+      const slide=pages[i];
+      const hasPhoto=Boolean(window.TONYCarouselMedia?.getImage(slide.id));
+      notes.push('Page '+(i+1)+': '+(hasPhoto?'independent image':'reuses cover image'));
+      if(hasPhoto){
+        notes.push('Page '+(i+1)+' image rights: '+clean(slide.imagePermission));
+        notes.push('Page '+(i+1)+' image credit: '+clean(slide.imageCredit||'not provided'));
+      }
+    }
+    notes.push('Editorial reminder: license terms, required attribution, date and context must be reviewed before social posting.');
+    notes.push('This ZIP is not proof of image usage rights or that an article has been independently verified.');
+    return notes.join('\n')+'\n';
+  }
+  function zipPngFiles(files, editorialNotes) {
     if (!Array.isArray(files) || files.length < 2 || files.length > MAX_PAGES) throw Error('Export must contain 2–6 pages.');
+    const entries=files.map((item,i)=>({bytes:item.bytes, filename:'TONY-slide-' + String(i + 1).padStart(2,'0') + '.png'}));
+    if (typeof editorialNotes === 'string' && editorialNotes.trim()) {
+      entries.push({bytes:encoder.encode(editorialNotes.slice(0,12000)),filename:'TONY-image-credits.txt'});
+    }
     const chunks = [], directory = [];
     let cursor = 0, total = 0;
     function u16(view, offset, value) { view.setUint16(offset, value, true); }
     function u32(view, offset, value) { view.setUint32(offset, value >>> 0, true); }
-    for (let i = 0; i < files.length; i++) {
-      const item = files[i];
-      if (!(item?.bytes instanceof Uint8Array) || item.bytes.length < 8) throw Error('Invalid PNG page ' + (i + 1));
-      // PNG signature only. No untrusted filenames enter the ZIP.
-      if (![137,80,78,71,13,10,26,10].every((n,k) => item.bytes[k] === n)) throw Error('Page ' + (i + 1) + ' is not a PNG.');
+    for (let i = 0; i < entries.length; i++) {
+      const item = entries[i];
+      if (!(item?.bytes instanceof Uint8Array) || (i<files.length && item.bytes.length < 8))
+        throw Error('Invalid page or credits file ' + (i + 1));
+      // PNG signature for image pages. All filenames are hardcoded here.
+      if (i<files.length && ![137,80,78,71,13,10,26,10].every((n,k) => item.bytes[k] === n))
+        throw Error('Page ' + (i + 1) + ' is not a PNG.');
       total += item.bytes.length;
       if (total > 90 * 1024 * 1024) throw Error('Carousel is too large (90 MB limit).');
-      const filename = encoder.encode('TONY-slide-' + String(i + 1).padStart(2,'0') + '.png');
+      const filename = encoder.encode(item.filename);
       const hash = crc32(item.bytes), size = item.bytes.length;
       const local = new Uint8Array(30 + filename.length);
       const lv = new DataView(local.buffer);
@@ -108,7 +137,7 @@
     const directorySize = directory.reduce((n, part) => n + part.length, 0);
     const end = new Uint8Array(22);
     const view = new DataView(end.buffer);
-    u32(view,0,0x06054b50);u16(view,8,files.length);u16(view,10,files.length);
+    u32(view,0,0x06054b50);u16(view,8,entries.length);u16(view,10,entries.length);
     u32(view,12,directorySize);u32(view,16,cursor);
     const zip = new Uint8Array(cursor + directorySize + end.length);
     let offset = 0;
@@ -256,7 +285,7 @@
         setStatus('Exporting page ' + (i + 1) + ' of ' + pages.length + '…');
         files.push({bytes: await toPngBytes(pageCanvas)});
       }
-      const archive = zipPngFiles(files);
+      const archive = zipPngFiles(files, buildEditorialNotes(app.state));
       const url = URL.createObjectURL(new Blob([archive], {type:'application/zip'}));
       const link = document.createElement('a');
       link.href = url;
@@ -344,6 +373,6 @@
   }
   if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded', mount);
   return {normalizeSlides, serializeSlides, pagesFromState, validatePages,
-    crc32, zipPngFiles, currentIndex:()=>current, preview:updatePreview,
+    crc32, zipPngFiles, buildEditorialNotes, currentIndex:()=>current, preview:updatePreview,
     withPage, syncControls, mount};
 });
