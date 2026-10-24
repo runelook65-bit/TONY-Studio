@@ -66,8 +66,9 @@ test('Gemini creative brief forbids fabricated incident photography',()=>{
 test('unauthorized Gemini route cannot spend API credits',async()=>{
  const old=process.env.GEMINI_API_KEY;process.env.GEMINI_API_KEY='fake-test-key';
  try{
-  const r=await generate(request('POST',{}, {headline:'Something'},),response());
-  assert.equal(r.status,401);
+  let status=0;const res=response();res.status=n=>{status=n;return res;};
+  await generate(request('POST',{}, {headline:'Something'}),res);
+  assert.equal(status,401);
  }finally{if(old)process.env.GEMINI_API_KEY=old;else delete process.env.GEMINI_API_KEY;}
 });
 test('visual UI mounts a real workflow with relevant source and AI controls',async()=>{
@@ -75,13 +76,12 @@ test('visual UI mounts a real workflow with relevant source and AI controls',asy
  '<div id="tonyImageCredit"></div></body></html>',{runScripts:'outside-only',url:'https://tony-studio-lmeo.vercel.app'});
  let renders=0;
  dom.window.TONYStudio={state:{headline:'Bronx transit delays',summary:'Updated service in NYC',region:'BRONX',badgeText:'TRANSIT'},renderCanvas(){renders++},showToast(){}};
- dom.window.fetch=async()=>new dom.window.Response();
  // Stub actual endpoint response with native global Response (jsdom has no Response constructor).
  dom.window.fetch=async()=>new Response(JSON.stringify({commons:true,pexels:false,gemini:false,canGenerate:false,adminConfigured:false}),
   {headers:{'content-type':'application/json'}});
  dom.window.eval(imageUi);
  dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
- await Promise.resolve();await Promise.resolve();
+ await new Promise(resolve=>setTimeout(resolve,20));
  const doc=dom.window.document;
  assert.ok(doc.getElementById('tonyVisualPanel'));
  assert.ok(doc.getElementById('tonyVisualSearchButton'));
