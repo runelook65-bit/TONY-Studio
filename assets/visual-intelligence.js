@@ -95,6 +95,7 @@ function applyDataImage(dataUrl,meta){
   image.onload=()=>{
    const app=window.TONYStudio;
    app.state.activeImage=image;app.state.panX=0;app.state.panY=0;app.state.zoom=100;
+   app.state.focusX=50;app.state.focusY=50;window.TONYCreative?.syncControls();
    const zoom=$('zoomRange');if(zoom){zoom.value='100';zoom.dispatchEvent(new Event('input'))}
    editorialImage(meta);app.renderCanvas();
    const tab=window.TONYMobile?.switchView;
