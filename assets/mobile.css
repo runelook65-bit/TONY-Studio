@@ -246,3 +246,24 @@
  .tony-brand-switch select{font-size:16px !important;min-height:44px}
  .tony-brand-switch {margin-bottom:12px}
 }
+
+/* TONY Visual Intelligence — responsive media selection integrated into the photo panel */
+.tony-visual-panel .tony-visual-results{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
+}
+.tony-visual-panel .tony-visual-result img{display:block;aspect-ratio:4/3;object-fit:cover;width:100%}
+.tony-visual-panel .tony-visual-result{min-width:0}
+.tony-visual-panel .tony-visual-result a{overflow-wrap:anywhere}
+.tony-visual-panel input,.tony-visual-panel select{color-scheme:dark}
+.tony-visual-panel input:focus-visible,.tony-visual-panel button:focus-visible,.tony-visual-panel select:focus-visible{outline:2px solid #FFC300;outline-offset:2px}
+.tony-visual-panel button:disabled{cursor:not-allowed;opacity:.6}
+#tonyVisualAdmin[hidden],#tonyVisualUnavailable[hidden],#tonyVisualAttribution[hidden]{display:none!important}
+@media(max-width:400px){
+ .tony-visual-panel .tony-visual-results{gap:7px}
+ .tony-visual-panel .tony-visual-result .p-2{padding:8px}
+ .tony-visual-panel #tonyVisualQuery{min-width:0}
+ .tony-visual-panel #tonyVisualSearchButton{max-width:125px;font-size:11px;padding:8px}
+}
+@media(min-width:1000px){
+ .tony-visual-panel .tony-visual-results{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
