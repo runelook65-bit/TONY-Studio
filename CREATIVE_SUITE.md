@@ -1,29 +1,43 @@
-# TONY Creative Suite — staging-only feature
+# TONY Creative Suite — unpublished development branch
 
-**Status:** GitHub feature branch only. Do not merge to main or deploy to Vercel before the owner explicitly requests **publish**.
+**Release hold:** Do not merge this feature branch into `main` or deploy to Vercel until the owner explicitly says **“yayınla”**. Vercel Preview deployments have been disabled at the project level to respect that requirement.
 
-## Original layouts
+## 1. Original TONY layouts
+
 - **Classic News:** the existing TONY look.
-- **Metro Dispatch:** NYC transit-inspired yellow rule and dark news panel.
-- **City Bulletin:** editorial inset border and denser front-page treatment.
+- **Metro Dispatch:** transit-map-inspired yellow rule and dark editorial panel.
+- **City Bulletin:** front-page-inspired inset border.
 
-The layouts are native canvas overlays, not copied Canva code or reverse-engineered protected assets. Changing a layout never edits the underlying source headline or its verification status.
+Layouts are new canvas drawing code, not third-party copied templates.
 
-## Manual photo focus
-The horizontal/vertical focus sliders choose the crop's focal point. Cover scaling always fills the canvas and bounds the photo coordinates so blank margins cannot appear. The editor can still drag the photo; pan is constrained by the final paint geometry. Changing or importing a new image centers the focus again. This feature does not include machine-learning subject detection.
+## 2. Photo framing
 
-## Carousel drafts
-1. Fill the main Story tab with sourced headline and summary.
-2. In **Design > Instagram Carousel Builder**, choose **+ Add page** and write an additional headline and factual summary.
-3. Add up to five follow-up slides (six slides including the cover); review each via **Preview page**.
-4. Choose **Download carousel ZIP**. The browser creates separate 1080px PNGs using the current square/portrait ratio and selected TONY styling. Every slide has an explicit page index.
-5. Review factual accuracy and image permission before posting. Instagram API carousel publication **is not part of this feature**. The ZIP is a local export, not a published post.
+The main story image uses bounded cover scaling, manual X/Y focal-point sliders and drag-to-pan. Empty crop margins are prevented by geometry clamps.
 
-The editor uses the cover's current background image on follow-up pages; per-slide media management is a future feature. Page text and layout selections are saved in browser drafts, but uploaded image bytes are intentionally **not** saved. Restored drafts require a fresh photo import and rights review.
+## 3. Per-slide carousel editor
 
-## QA
-- `npm run check` — syntax validation including both new browser modules.
-- `npm test` — existing regression tests plus template/crop/ZIP/carousel/draft integration tests.
-- Manual browser review on desktop and mobile is still required before production, particularly for the 1:1 and 4:5 canvases, long headlines, logo and AI disclosures.
+1. Enter the source URL, editorial verification and cover image rights in **Story / Editorial Review**.
+2. Enter the main story headline, supporting summary and select a cover photograph.
+3. In **Design > Instagram Carousel Builder**, click **Add page** to create up to five follow-up slides (six pages including the cover).
+4. Choose each page to edit its headline and supporting facts.
+5. For an individual follow-up slide, optionally **upload a JPG/PNG/WEBP** (15 MB maximum), change its design template, adjust horizontal/vertical focus and photo zoom independently.
+6. For each independent photo, confirm image rights and supply photographer/license credits where appropriate. If the image is synthetic, select **AI-generated illustration**; an explicit AI label is drawn into that slide.
+7. Move follow-up pages earlier/later; the cover remains first.
+8. **Download carousel ZIP** to export ordered 1080-pixel square or portrait PNG slides plus `TONY-image-credits.txt`. The ZIP is a locally downloaded publication draft and is **not** posted to Instagram.
 
-No Meta credentials, Instagram publishing endpoint or photo-license guardrails are changed in this feature.
+Export is blocked if the source URL is missing or not HTTPS, verification is not marked cross-checked/official, cover rights are unreviewed, or independent page photos lack rights review / required photographer-credit details. These declarations are editorial input, not automated fact-checking or proof of license ownership.
+
+## 4. Draft limitations and memory
+
+- Source text, slide order, designs and focus/zoom settings persist in browser drafts.
+- **Image files are memory-only.** They are not persisted in localStorage and must be re-uploaded after a reload or draft restoration.
+- Restored drafts omit uploaded images and prior photo-rights confirmations; the page safely falls back to the cover photo until an editor adds a new image.
+- The page ZIP contains a credit/reference note, but attribution must still comply with the actual image license and be added to the final published Instagram caption as needed.
+- The Instagram connector remains single-image only; there is no carousel API autopublishing.
+
+## 5. Checks and release gates
+
+- `npm run check` syntax-checks the new modules.
+- `npm test` includes crop-boundary, image registry, rights, editor isolation, archive metadata and mobile interaction tests.
+- Manual QA still required on real mobile browsers and desktop; verify separate photo upload, square/portrait exports and ZIP extraction before release.
+- **Do not merge the draft pull request or re-enable Vercel Preview deployments before the owner's publish instruction.**
