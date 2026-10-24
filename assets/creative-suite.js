@@ -37,7 +37,6 @@
   }
   function paintFrame(ctx, state, width, height) {
     const template = TEMPLATES[state.layoutVariant] ? state.layoutVariant : 'classic';
-    if (template === 'classic') return;
     ctx.save();
     if (template === 'metro') {
       ctx.fillStyle = 'rgba(5,9,15,0.38)';
