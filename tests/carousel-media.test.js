@@ -147,6 +147,13 @@ test('the carousel editor renders different slide images without changing cover 
   const layoutSelect=w.document.getElementById('tonyCarouselSlideLayout');
   layoutSelect.value='bulletin';layoutSelect.dispatchEvent(new w.Event('change'));
   assert.equal(state.carouselSlides[0].layoutVariant,'bulletin');
+  const zoom=w.document.getElementById('tonyCarouselSlideZoom');
+  zoom.value='145';zoom.dispatchEvent(new w.Event('input'));
+  assert.equal(state.carouselSlides[0].zoom,145);
+  const nav=w.document.getElementById('tonyCarouselPages');
+  assert.equal(nav.getAttribute('role'),'tablist');
+  assert.equal(nav.querySelectorAll('[role="tab"]').length,3);
+  assert.equal(nav.children[1].getAttribute('aria-selected'),'true');
   w.document.getElementById('tonyCarouselMoveRight').click();
   assert.equal(state.carouselSlides[1].id,pageIds[0]);
   assert.equal(w.TONYCarouselMedia.getImage(pageIds[0]),other);
