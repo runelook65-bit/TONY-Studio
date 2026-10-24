@@ -170,10 +170,28 @@
       const b = document.createElement('button');
       b.type = 'button';
       b.textContent = 'Page ' + (i + 1);
+      b.setAttribute('role','tab');
+      b.setAttribute('aria-selected',String(i===current));
+      b.setAttribute('aria-controls',i===0?'tonyCarouselCoverNote':'tonyCarouselEditor');
       b.setAttribute('aria-pressed', String(i === current));
+      b.tabIndex=i===current?0:-1;
       b.className = 'rounded-lg border px-3 py-2 text-xs font-bold ' +
         (i === current ? 'border-[#FFC300] text-[#FFC300] bg-zinc-800' : 'border-white/15 text-zinc-300 bg-zinc-900');
-      b.addEventListener('click', () => {current = i; paintEditor(); updatePreview();});
+      b.addEventListener('click', () => {
+        if (busy) return;
+        current = i;
+        paintEditor(); updatePreview();
+        $('tonyCarouselPages')?.children[current]?.focus();
+      });
+      b.addEventListener('keydown', event => {
+        if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key) || busy) return;
+        event.preventDefault();
+        const next=event.key==='Home'?0:event.key==='End'?pages.length-1:
+          (i+(event.key==='ArrowRight'?1:-1)+pages.length)%pages.length;
+        current=next;
+        paintEditor(); updatePreview();
+        $('tonyCarouselPages')?.children[next]?.focus();
+      });
       tabs.appendChild(b);
     }
     const isCover = current === 0;
