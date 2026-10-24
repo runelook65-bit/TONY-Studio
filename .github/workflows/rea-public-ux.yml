@@ -62,8 +62,12 @@ jobs:
           done
           sleep 14
           curl --max-time 3 --silent --fail "http://127.0.0.1:9222/json/list" -o rea-evidence/cdp-targets.json
-          rea list-browser-targets http://127.0.0.1:9222 --approved --json \
+          rea list-browser-targets http://127.0.0.1:9222 --json \
             > rea-evidence/rea-discovery.json 2> rea-evidence/rea-discovery.log || true
+          # Verify the output is real Evidence rather than a CLI error envelope.
+          if jq -e 'has("code") and has("message")' rea-evidence/rea-discovery.json > /dev/null 2>&1; then
+            echo 'REA CLI discovery returned error:'; cat rea-evidence/rea-discovery.json
+          fi
           echo '# REA public UX evidence' >> "$GITHUB_STEP_SUMMARY"
           echo '| Page | Captured | Observed URL |' >> "$GITHUB_STEP_SUMMARY"
           echo '|---|---|---|' >> "$GITHUB_STEP_SUMMARY"
@@ -78,8 +82,9 @@ jobs:
               continue
             fi
             URL="$(jq -r --arg id "$ID" '.[] | select(.id==$id) | .url' rea-evidence/cdp-targets.json)"
-            if rea inspect-web-page http://127.0.0.1:9222 "$ID" --approved --json \
-                  > "rea-evidence/$LABEL.json" 2> "rea-evidence/$LABEL.error.txt"; then
+            if rea inspect-web-page http://127.0.0.1:9222 "$ID" --json \
+                  > "rea-evidence/$LABEL.json" 2> "rea-evidence/$LABEL.error.txt" \
+                  && jq -e '(.ok != false) and (has("normalized_result") or has("evidence_id"))' "rea-evidence/$LABEL.json" > /dev/null; then
               echo "| $LABEL | yes | $URL |" >> "$GITHUB_STEP_SUMMARY"
               SUCCESS=$((SUCCESS+1))
             else
