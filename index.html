@@ -1164,6 +1164,7 @@
       state.autoFitHeadline = true;
       // A new story must not inherit another article's carousel pages.
       state.carouselSlides = [];
+      window.TONYCarouselMedia?.clear();
       window.TONYCarousel?.syncControls();
       state.region = preset.region;
       state.dateLang = 'EN';
@@ -1330,6 +1331,9 @@
     }
 
     function loadPostIntoEditor(post) {
+      // Grid previews do not persist uploaded carousel media. Start with a
+      // clean in-memory registry to prevent cross-article photo inheritance.
+      window.TONYCarouselMedia?.clear();
       state.badgeText = post.badgeText;
       state.badgeColor = post.badgeColor;
       state.headline = post.headline;
@@ -1422,6 +1426,7 @@
   <script src="/assets/smart-typography.js?v=1" defer></script>
   <script src="/assets/creative-suite.js?v=1" defer></script>
   <script src="/assets/carousel-studio.js?v=1" defer></script>
+  <script src="/assets/carousel-media.js?v=1" defer></script>
   <script src="/assets/visual-intelligence.js?v=1" defer></script>
   <script src="/assets/mobile.js?v=1" defer></script>
 </body>
