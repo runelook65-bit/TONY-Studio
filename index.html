@@ -611,6 +611,9 @@
         ctx.save();
         ctx.shadowColor = 'rgba(0,0,0,.50)';
         ctx.shadowBlur = 18;
+        ctx.beginPath();
+        ctx.arc(padX + logoSize / 2, 54 + logoSize / 2, logoSize / 2, 0, Math.PI * 2);
+        ctx.clip();
         ctx.drawImage(tonyLogo, padX, 54, logoSize, logoSize);
         ctx.restore();
       } else if (state.brandLogoMode !== 'none') {
