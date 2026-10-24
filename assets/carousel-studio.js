@@ -11,10 +11,34 @@
   const $ = id => document.getElementById(id);
   const encoder = new TextEncoder();
 
+  let idCounter = 0;
+  function makeId() {
+    idCounter += 1;
+    return 'slide_' + Date.now().toString(36) + '_' + idCounter.toString(36);
+  }
   function normalizeSlides(input) {
-    return (Array.isArray(input) ? input : []).slice(0, MAX_PAGES - 1).map(s => ({
-      headline: typeof s?.headline === 'string' ? s.headline.slice(0, 500) : '',
-      summary: typeof s?.summary === 'string' ? s.summary.slice(0, 1500) : ''
+    const ids = new Set();
+    return (Array.isArray(input) ? input : []).slice(0, MAX_PAGES - 1).map(s => {
+      const possible = typeof s?.id === 'string' && /^[a-z0-9_-]{1,72}$/i.test(s.id) ? s.id : null;
+      const id = possible && !ids.has(possible) ? possible : makeId();
+      ids.add(id);
+      return {
+        id,
+        headline: typeof s?.headline === 'string' ? s.headline.slice(0, 500) : '',
+        summary: typeof s?.summary === 'string' ? s.summary.slice(0, 1500) : '',
+        layoutVariant: ['inherit','classic','metro','bulletin'].includes(s?.layoutVariant) ? s.layoutVariant : 'inherit',
+        focusX: Math.max(0, Math.min(100, Number(s?.focusX ?? 50) || 0)),
+        focusY: Math.max(0, Math.min(100, Number(s?.focusY ?? 50) || 0)),
+        zoom: Math.max(100, Math.min(220, Number(s?.zoom ?? 100) || 100)),
+        imagePermission: ['original','licensed','ai-generated'].includes(s?.imagePermission) ? s.imagePermission : 'unknown',
+        imageCredit: typeof s?.imageCredit === 'string' ? s.imageCredit.slice(0,200) : ''
+      };
+    });
+  }
+  function serializeSlides(input) {
+    return normalizeSlides(input).map(({id,headline,summary,layoutVariant,focusX,focusY,zoom})=>({
+      id,headline,summary,layoutVariant,focusX,focusY,zoom
+      // No uploaded photo bytes or stale rights confirmations in localStorage.
     }));
   }
   function pagesFromState(state) {
@@ -130,26 +154,45 @@
       $('tonyCarouselSummary').value = pages[current].summary;
     }
     $('tonyCarouselRemove').disabled = isCover || busy;
+    $('tonyCarouselMoveLeft').disabled = isCover || current <= 1 || busy;
+    $('tonyCarouselMoveRight').disabled = isCover || current >= pages.length - 1 || busy;
     $('tonyCarouselAdd').disabled = pages.length >= MAX_PAGES || busy;
     $('tonyCarouselDownload').disabled = busy || pages.length < 2;
     $('tonyCarouselCount').textContent = pages.length + ' / ' + MAX_PAGES + ' pages';
+    window.TONYCarouselMedia?.syncControls();
   }
   function withPage(app, index, total, action) {
     const state = app.state;
     const original = {
-      headline:state.headline, summary:state.summary, exportSlide:state._tonyExportSlide
+      headline:state.headline, summary:state.summary, exportSlide:state._tonyExportSlide,
+      activeImage:state.activeImage, photoKind:state.photoKind,
+      layoutVariant:state.layoutVariant, focusX:state.focusX, focusY:state.focusY,
+      zoom:state.zoom, panX:state.panX, panY:state.panY
     };
     const slide = pagesFromState(state)[index];
     if (!slide) throw Error('Carousel page was not found.');
     try {
       state.headline = slide.headline;
       state.summary = slide.summary;
+      if (index > 0) {
+        const image = window.TONYCarouselMedia?.getImage(slide.id);
+        if (image) {
+          state.activeImage = image;
+          state.photoKind = slide.imagePermission === 'ai-generated' ? 'ai' : 'manual';
+        }
+        if (slide.layoutVariant !== 'inherit') state.layoutVariant = slide.layoutVariant;
+        state.focusX = slide.focusX;
+        state.focusY = slide.focusY;
+        state.zoom = slide.zoom;
+        state.panX = 0;
+        state.panY = 0;
+      }
       state._tonyExportSlide = {index:index + 1, total};
       app.renderCanvas();
       return action(app.canvas);
     } finally {
-      state.headline = original.headline;
-      state.summary = original.summary;
+      for (const key of ['headline','summary','activeImage','photoKind',
+        'layoutVariant','focusX','focusY','zoom','panX','panY']) state[key] = original[key];
       if (original.exportSlide === undefined) delete state._tonyExportSlide;
       else state._tonyExportSlide = original.exportSlide;
       app.renderCanvas();
@@ -184,7 +227,7 @@
     if (busy) return;
     const app = window.TONYStudio;
     if (!app) return;
-    const err = validatePages(app.state);
+    const err = validatePages(app.state) || window.TONYCarouselMedia?.exportWarning(app.state);
     if (err) {setStatus(err, true);return;}
     const button = $('tonyCarouselDownload');
     busy = true;
@@ -248,7 +291,7 @@
       '<h3 class="text-sm font-black text-white">Instagram Carousel Builder</h3>' +
       '<p class="text-[11px] text-zinc-400 mt-1">2–6 original news slides in one ZIP. No automatic Instagram posting.</p></div>' +
       '<span id="tonyCarouselCount" class="text-xs text-[#FFC300] font-bold"></span></div>' +
-      '<div id="tonyCarouselPages" class="flex gap-2 overflow-x-auto pb-1" aria-label="Carousel pages"></div>' +
+      '<div id="tonyCarouselPages" role="tablist" class="flex gap-2 overflow-x-auto pb-1" aria-label="Carousel pages"></div>' +
       '<p id="tonyCarouselCoverNote" class="text-xs text-zinc-400">Cover uses the main Story headline and summary. Change them in the editor.</p>' +
       '<div id="tonyCarouselEditor" class="space-y-2" hidden>' +
       '<label for="tonyCarouselHeadline" class="block text-xs font-semibold text-zinc-300">Slide headline</label>' +
@@ -258,6 +301,8 @@
       '<div class="flex flex-wrap gap-2">' +
       '<button type="button" id="tonyCarouselAdd" class="px-3 py-2.5 rounded-lg bg-zinc-800 text-white text-xs font-bold">+ Add page</button>' +
       '<button type="button" id="tonyCarouselRemove" class="px-3 py-2.5 rounded-lg bg-zinc-800 text-white text-xs font-bold">Remove page</button>' +
+      '<button type="button" id="tonyCarouselMoveLeft" aria-label="Move slide earlier" class="px-3 py-2.5 rounded-lg bg-zinc-800 text-white text-xs font-bold">Move ←</button>' +
+      '<button type="button" id="tonyCarouselMoveRight" aria-label="Move slide later" class="px-3 py-2.5 rounded-lg bg-zinc-800 text-white text-xs font-bold">Move →</button>' +
       '<button type="button" id="tonyCarouselRefresh" class="px-3 py-2.5 rounded-lg border border-[#FFC300]/50 text-[#FFC300] text-xs font-bold">Preview page</button></div>' +
       '<img id="tonyCarouselPreview" alt="Carousel slide preview" class="mx-auto rounded-lg border border-white/10 w-44 max-w-full" />' +
       '<button type="button" id="tonyCarouselDownload" class="w-full rounded-lg bg-[#FFC300] p-3 text-xs font-black text-black">Download carousel ZIP (PNG slides)</button>' +
@@ -266,18 +311,30 @@
     $('tonyCarouselAdd').addEventListener('click', () => {
       const slides = app.state.carouselSlides;
       if (busy || slides.length >= MAX_PAGES - 1) return;
-      slides.push({headline:'',summary:''});
+      slides.push({id:makeId(),headline:'',summary:'',layoutVariant:'inherit',focusX:50,focusY:50,zoom:100,imagePermission:'unknown',imageCredit:''});
       current = slides.length;
       paintEditor();
       setStatus('Add sourced facts for the new slide, then preview it.');
     });
     $('tonyCarouselRemove').addEventListener('click', () => {
       if (busy || current === 0) return;
-      app.state.carouselSlides.splice(current - 1,1);
+      const removed=app.state.carouselSlides.splice(current - 1,1)[0];
+      window.TONYCarouselMedia?.remove(removed?.id);
       current = Math.min(current,app.state.carouselSlides.length);
       paintEditor();
       updatePreview();
     });
+    function moveSlide(direction) {
+      if (busy || current === 0) return;
+      const target=current+direction;
+      if (target<1 || target>app.state.carouselSlides.length) return;
+      const slides=app.state.carouselSlides;
+      [slides[current-1],slides[target-1]]=[slides[target-1],slides[current-1]];
+      current=target;
+      paintEditor(); updatePreview();
+    }
+    $('tonyCarouselMoveLeft').addEventListener('click',()=>moveSlide(-1));
+    $('tonyCarouselMoveRight').addEventListener('click',()=>moveSlide(1));
     $('tonyCarouselHeadline').addEventListener('input', updateSlideText);
     $('tonyCarouselSummary').addEventListener('input', updateSlideText);
     $('tonyCarouselRefresh').addEventListener('click', updatePreview);
@@ -286,5 +343,7 @@
     updatePreview();
   }
   if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded', mount);
-  return {normalizeSlides, pagesFromState, validatePages, crc32, zipPngFiles, syncControls, mount};
+  return {normalizeSlides, serializeSlides, pagesFromState, validatePages,
+    crc32, zipPngFiles, currentIndex:()=>current, preview:updatePreview,
+    withPage, syncControls, mount};
 });
