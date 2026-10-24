@@ -188,7 +188,7 @@
       photoFilter:s.photoFilter || 'gotham',filterIntensity:s.filterIntensity ?? 70,
       layoutVariant:s.layoutVariant || 'classic',
       focusX:s.focusX ?? 50,focusY:s.focusY ?? 50,
-      carouselSlides:window.TONYCarousel?.normalizeSlides(s.carouselSlides) || [],
+      carouselSlides:window.TONYCarousel?.serializeSlides(s.carouselSlides) || [],
       brandLogoMode:s.brandLogoMode || 'logo',brandLogoSize:s.brandLogoSize || 120,
       savedAt:new Date().toISOString()
     };
@@ -271,7 +271,7 @@
         photoSourceCredit:p.photoSourceCredit || '',photoLicense:p.photoLicense || '',
         photoFilter:p.photoFilter || 'gotham',filterIntensity:p.filterIntensity ?? 70,
         layoutVariant:p.layoutVariant || 'classic',
-        carouselSlides:window.TONYCarousel?.normalizeSlides(p.carouselSlides) || [],
+        carouselSlides:window.TONYCarousel?.serializeSlides(p.carouselSlides) || [],
         // Photos are not stored in browser drafts: never reuse stale focal coordinates.
         focusX:50,focusY:50,
         brandLogoMode:p.brandLogoMode || 'logo',brandLogoSize:p.brandLogoSize || 120,
