@@ -44,9 +44,6 @@ jobs:
             --user-data-dir="$RUNNER_TEMP/rea-public-browser" \
             --window-size=1365,900 \
             "https://www.canva.com/photo-editor/" \
-            "https://www.canva.com/help/image-editor/" \
-            "https://buffer.com/publish/" \
-            "https://support.buffer.com/articles/managing-and-approving-draft-posts-57li7M8tDA" \
             >rea-evidence/chrome.log 2>&1 &
           CHROME_PID=$!
           trap 'kill "$CHROME_PID" 2>/dev/null || true' EXIT
@@ -54,8 +51,16 @@ jobs:
             curl --max-time 3 --silent --fail "http://127.0.0.1:9222/json/list" -o rea-evidence/cdp-targets.json && break
             sleep 2
           done
-          if [ ! -s rea-evidence/cdp-targets.json ]; then echo 'CDP startup failed'; exit 1; fi
-          sleep 12
+          if [ ! -s rea-evidence/cdp-targets.json ]; then
+            echo 'CDP startup failed'; cat rea-evidence/chrome.log
+            exit 1
+          fi
+          # Chrome headless accepts only one initial target. Open other public
+          # pages through Chrome's local DevTools discovery endpoint.
+          for URL in             'https://www.canva.com/help/image-editor/'             'https://buffer.com/publish/'             'https://support.buffer.com/articles/managing-and-approving-draft-posts-57li7M8tDA'; do
+            curl -X PUT --max-time 6 --silent --show-error               "http://127.0.0.1:9222/json/new?$URL" > /dev/null || true
+          done
+          sleep 14
           curl --max-time 3 --silent --fail "http://127.0.0.1:9222/json/list" -o rea-evidence/cdp-targets.json
           rea list-browser-targets http://127.0.0.1:9222 --approved --json \
             > rea-evidence/rea-discovery.json 2> rea-evidence/rea-discovery.log || true
