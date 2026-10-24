@@ -37,8 +37,9 @@
       for (const word of words) {
         const segments = ctx.measureText(word).width > maxWidth
           ? breakWord(ctx, word, maxWidth) : [word];
-        for (const segment of segments) {
-          const candidate = line ? line + ' ' + segment : segment;
+        for (let index = 0; index < segments.length; index++) {
+          const segment = segments[index];
+          const candidate = line ? line + (index === 0 ? ' ' : '') + segment : segment;
           if (line && ctx.measureText(candidate).width > maxWidth) {
             lines.push(line);
             line = segment;
