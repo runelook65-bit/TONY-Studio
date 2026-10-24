@@ -1162,6 +1162,9 @@
       state.headline = preset.headline;
       state.summary = preset.summary;
       state.autoFitHeadline = true;
+      // A new story must not inherit another article's carousel pages.
+      state.carouselSlides = [];
+      window.TONYCarousel?.syncControls();
       state.region = preset.region;
       state.dateLang = 'EN';
       if (preset.img) state.activeImage = preset.img;
