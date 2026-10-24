@@ -12,7 +12,12 @@ function validatePayload(body){
  try{url=new URL(p.sourceUrl);}catch{throw new Error('A valid source URL is required.');}
  if(url.protocol!=='https:')throw new Error('Use an HTTPS source URL.');
  if(!['cross-checked','official-source'].includes(p.verificationStatus))throw new Error('Verify the report before publishing.');
- if(!['original','licensed'].includes(p.imagePermission))throw new Error('Confirm original or licensed rights to the posted image.');
+ if(p.photoKind==='ai'){
+  if(p.imagePermission!=='ai-generated'||!/AI[ -](?:generated[ -])?illustration/i.test(p.caption))
+   throw new Error('Generated artwork requires AI image rights review and visible AI illustration disclosure in the caption.');
+ }else if(!['original','licensed'].includes(p.imagePermission)){
+  throw new Error('Confirm original or licensed rights to the posted image.');
+ }
  if(typeof p.imageData!=='string'||!/^data:image\/jpeg;base64,[a-zA-Z0-9+/=]+$/.test(p.imageData))throw new Error('A JPEG image exported by TONY Studio is required.');
  const binary=Buffer.from(p.imageData.substring('data:image/jpeg;base64,'.length),'base64');
  if(binary.length<1500||binary.length>BYTES_MAX||binary[0]!==0xff||binary[1]!==0xd8||binary[binary.length-2]!==0xff||binary[binary.length-1]!==0xd9){

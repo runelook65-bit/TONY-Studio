@@ -12,12 +12,13 @@
  function makeCaption(){
   const s=window.TONYStudio.state;
   const parts=[
-   (s.badgeText && s.badgeText.toUpperCase()==='BREAKING'?'🚨 ':'')+s.headline.trim(),
+   (s.photoKind === 'ai' ? 'AI-generated illustration · ' : '') + (s.badgeText && s.badgeText.toUpperCase()==='BREAKING'?'🚨 ':'')+s.headline.trim(),
    s.summary.trim(),
    '📍 '+(s.region||'NEW YORK CITY')
   ];
   if(s.sourceUrl)parts.push('Source: '+s.sourceUrl);
-  if(s.imageCredit)parts.push('Photo: '+s.imageCredit);
+  if(s.imageCredit)parts.push((s.photoKind === 'ai' ? 'Art: ' : 'Photo: ') + s.imageCredit);
+  if(s.photoSourceUrl)parts.push('Image source: '+s.photoSourceUrl);
   return parts.filter(Boolean).join('\n\n').slice(0,2200);
  }
  function mount(){
@@ -102,7 +103,7 @@
   if(s.publicationStatus!=='ready')return message('Editorial status must be Ready to Publish.','error');
   if(!s.sourceUrl||!['cross-checked','official-source'].includes(s.verificationStatus))
    return message('A source URL and completed source verification are required.','error');
-  if(!['licensed','original'].includes(s.imagePermission))
+  if(!['licensed','original','ai-generated'].includes(s.imagePermission))
    return message('Confirm licensed or original image rights.','error');
   if(!$('tonyIgConfirm').checked)return message('Check the publication consent box.','error');
   const caption=$('tonyIgCaption').value.trim();
@@ -119,7 +120,7 @@
   try{
    message('Uploading JPEG and submitting to Instagram…');
    let data=await request('/api/instagram/publish',{method:'POST',body:JSON.stringify({
-    imageData,caption,sourceUrl:s.sourceUrl,verificationStatus:s.verificationStatus,imagePermission:s.imagePermission
+    imageData,caption,sourceUrl:s.sourceUrl,verificationStatus:s.verificationStatus,imagePermission:s.imagePermission,photoKind:s.photoKind||'manual'
    })});
    let loops=0;
    while(data.status==='processing' && loops++<8){

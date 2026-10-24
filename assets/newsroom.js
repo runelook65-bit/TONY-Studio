@@ -64,7 +64,7 @@
       '<div><label for="tonyImagePermission" class="block text-xs font-semibold text-zinc-300 mb-1">Image Rights</label>' +
       '<select id="tonyImagePermission" class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3 py-2.5 text-xs text-white">' +
       '<option value="unknown">Rights not reviewed</option><option value="licensed">Licensed / permission granted</option>' +
-      '<option value="original">Original photo / owned by us</option><option value="none">Do not use an image</option></select></div></div>' +
+      '<option value="original">Original photo / owned by us</option><option value="ai-generated">AI-generated illustration (disclosed)</option><option value="none">Do not use an image</option></select></div></div>' +
       newBox('Photo Credit / License Note', 'tonyImageCredit', 'Photographer, agency or license') +
       '<div><label for="tonyPublicationStatus" class="block text-xs font-semibold text-zinc-300 mb-1">Publication Status (manual)</label>' +
       '<select id="tonyPublicationStatus" class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3 py-2.5 text-xs text-white">' +
@@ -182,6 +182,8 @@
       verificationStatus:s.verificationStatus || 'needs-review',
       imagePermission:s.imagePermission || 'unknown',imageCredit:s.imageCredit || '',
       publicationStatus:s.publicationStatus || 'draft',
+      photoKind:s.photoKind || 'manual',photoSourceUrl:s.photoSourceUrl || '',
+      photoSourceCredit:s.photoSourceCredit || '',photoLicense:s.photoLicense || '',
       photoFilter:s.photoFilter || 'gotham',filterIntensity:s.filterIntensity ?? 70,
       brandLogoMode:s.brandLogoMode || 'logo',brandLogoSize:s.brandLogoSize || 120,
       savedAt:new Date().toISOString()
@@ -210,6 +212,13 @@
       app.state.sourceName=d.sourceName || '';
       app.state.sourcePublishedAt=d.sourcePublishedAt || null;
       setEditorial(d);
+      // Browser draft storage does not persist uploaded images: require new image rights review.
+      app.state.photoKind = 'manual';
+      app.state.photoSourceUrl = '';
+      app.state.photoSourceCredit = '';
+      app.state.photoLicense = '';
+      const copyrightStatus = $('tonyImagePermission');
+      if (copyrightStatus) { copyrightStatus.value = 'unknown'; copyrightStatus.dispatchEvent(new Event('change')); }
       app.state.photoFilter = d.photoFilter || 'gotham';
       app.state.filterIntensity = d.filterIntensity ?? 70;
       app.state.brandLogoMode = d.brandLogoMode || 'logo';
@@ -246,6 +255,8 @@
         verificationStatus:p.verificationStatus || 'needs-review',
         imagePermission:p.imagePermission || 'unknown',imageCredit:p.imageCredit || '',
         publicationStatus:p.publicationStatus || 'draft',
+        photoKind:p.photoKind || 'manual',photoSourceUrl:p.photoSourceUrl || '',
+        photoSourceCredit:p.photoSourceCredit || '',photoLicense:p.photoLicense || '',
         photoFilter:p.photoFilter || 'gotham',filterIntensity:p.filterIntensity ?? 70,
         brandLogoMode:p.brandLogoMode || 'logo',brandLogoSize:p.brandLogoSize || 120,
         previewUrl: p.previewUrl && p.previewUrl.length < 85000 ? p.previewUrl : ''

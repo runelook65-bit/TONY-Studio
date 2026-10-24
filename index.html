@@ -439,6 +439,10 @@
       dragStartX: 0,
       dragStartY: 0,
       activeImage: null,
+      photoKind: 'manual',
+      photoSourceUrl: '',
+      photoSourceCredit: '',
+      photoLicense: '',
       feedPosts: []
     };
 
@@ -665,6 +669,26 @@
         ctx.restore();
       }
 
+      // Synthetic artwork must be plainly distinguishable from documentary photography.
+      if (state.photoKind === 'ai') {
+        ctx.save();
+        const tagText = 'AI ILLUSTRATION';
+        ctx.font = '800 19px Inter, sans-serif';
+        const tagWidth = ctx.measureText(tagText).width + 34;
+        const tagX = W - padX - tagWidth;
+        roundRect(ctx, tagX, 140, tagWidth, 42, 8);
+        ctx.fillStyle = 'rgba(12,12,18,.92)';
+        ctx.fill();
+        ctx.strokeStyle = '#FFC300';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#FFC300';
+        ctx.fillText(tagText, tagX + tagWidth / 2, 161);
+        ctx.restore();
+      }
+
       // 6. ALT META BAR (BÖLGE | TARİH - SAAT & KAYDET İKONU)
       const footerY = H - 64;
       ctx.save();
@@ -854,12 +878,16 @@
       // Hazır görsel butonları
       document.getElementById('btnSampleMetro').addEventListener('click', () => {
         state.activeImage = preloadMetroImg;
+        state.photoKind = 'manual';
+        state.photoSourceUrl = '';
         resetCropState();
         renderCanvas();
         showToast('NYC subway sample loaded');
       });
       document.getElementById('btnSampleSkyline').addEventListener('click', () => {
         state.activeImage = preloadSkylineImg;
+        state.photoKind = 'manual';
+        state.photoSourceUrl = '';
         resetCropState();
         renderCanvas();
         showToast('NYC skyline sample loaded');
@@ -1087,6 +1115,12 @@
         const img = new Image();
         img.onload = () => {
           state.activeImage = img;
+          state.photoKind = 'manual';
+          state.photoSourceUrl = '';
+          state.photoSourceCredit = '';
+          state.photoLicense = '';
+          const rightInput = document.getElementById('tonyImagePermission');
+          if (rightInput) { rightInput.value = 'unknown'; rightInput.dispatchEvent(new Event('change')); }
           resetCropState();
           renderCanvas();
           showToast('Photo applied to design');
@@ -1137,7 +1171,7 @@
     // --- SOSYAL MEDYA METNİ KOPYALAMA ---
     function copyCaptionToClipboard() {
       const dt = formatDateTimeDisplay();
-      const caption = `🚨 [${state.badgeText}] ${state.headline}\n\n${state.summary}\n\n📍 ${state.region} | 🗓️ ${dt}${state.sourceUrl ? '\n\nSource: ' + state.sourceUrl : ''}`;
+      const caption = `${state.photoKind === 'ai' ? 'AI-generated illustration · ' : ''}[${state.badgeText}] ${state.headline}\n\n${state.summary}\n\n📍 ${state.region} | 🗓️ ${dt}${state.sourceUrl ? '\n\nArticle: ' + state.sourceUrl : ''}${state.imageCredit ? '\nPhoto/Art: ' + state.imageCredit : ''}${state.photoSourceUrl ? '\nImage source: ' + state.photoSourceUrl : ''}`;
       const ta = document.createElement('textarea');
       ta.value = caption;
       document.body.appendChild(ta);
@@ -1176,7 +1210,11 @@
         photoFilter: state.photoFilter || 'gotham',
         filterIntensity: state.filterIntensity ?? 70,
         brandLogoMode: state.brandLogoMode || 'logo',
-        brandLogoSize: state.brandLogoSize || 120
+        brandLogoSize: state.brandLogoSize || 120,
+        photoKind: state.photoKind || 'manual',
+        photoSourceUrl: state.photoSourceUrl || '',
+        photoSourceCredit: state.photoSourceCredit || '',
+        photoLicense: state.photoLicense || ''
       };
       state.feedPosts.unshift(postObj);
       if (window.TONYNewsroom) window.TONYNewsroom.captureFeedPreview();
@@ -1276,6 +1314,10 @@
       state.filterIntensity = post.filterIntensity ?? 70;
       state.brandLogoMode = post.brandLogoMode || 'logo';
       state.brandLogoSize = post.brandLogoSize || 120;
+      state.photoKind = post.imageRef ? (post.photoKind || 'manual') : 'manual';
+      state.photoSourceUrl = post.imageRef ? (post.photoSourceUrl || '') : '';
+      state.photoSourceCredit = post.imageRef ? (post.photoSourceCredit || '') : '';
+      state.photoLicense = post.imageRef ? (post.photoLicense || '') : '';
       if (window.TONYNewsroom) window.TONYNewsroom.setEditorial(post);
       if (window.TONYEffects) window.TONYEffects.syncControls();
 
@@ -1334,6 +1376,7 @@
   <script src="/assets/newsroom.js" defer></script>
   <script src="/assets/instagram.js" defer></script>
   <script src="/assets/editor-effects.js?v=1" defer></script>
+  <script src="/assets/visual-intelligence.js?v=1" defer></script>
   <script src="/assets/mobile.js?v=1" defer></script>
 </body>
 </html>
