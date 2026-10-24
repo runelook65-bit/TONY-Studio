@@ -86,6 +86,9 @@
       slider.value=String(val);
       $('tonyCarouselSlideFocus'+axis+'Value').textContent=String(val)+'%';
     }
+    const zoom=clamp(slide.zoom??100,100,220);
+    $('tonyCarouselSlideZoom').value=String(zoom);
+    $('tonyCarouselSlideZoomValue').textContent=String(zoom)+'%';
     $('tonyCarouselSlideRights').value=custom?(slide.imagePermission||'unknown'):'unknown';
     $('tonyCarouselSlideRights').disabled=!custom;
     $('tonyCarouselSlideCredit').value=custom?(slide.imageCredit||''):'';
@@ -168,6 +171,9 @@
       (axis==='X'?'Horizontal focus':'Vertical focus')+'</label><input id="tonyCarouselSlideFocus'+axis+
       '" type="range" min="0" max="100" step="5" class="w-full accent-[#FFC300]">'+
       '<output id="tonyCarouselSlideFocus'+axis+'Value" for="tonyCarouselSlideFocus'+axis+'" class="text-[11px] text-zinc-400"></output></div>').join('')+'</div>'+
+      '<div><label for="tonyCarouselSlideZoom" class="block text-[11px] text-zinc-300 mb-1">Slide photo zoom</label>'+
+      '<input id="tonyCarouselSlideZoom" type="range" min="100" max="220" step="5" class="w-full accent-[#FFC300]">'+
+      '<output id="tonyCarouselSlideZoomValue" for="tonyCarouselSlideZoom" class="text-[11px] text-zinc-400"></output></div>'+
       '<div><label for="tonyCarouselSlideRights" class="block text-xs text-zinc-300 mb-1">Image rights for this slide</label>'+
       '<select id="tonyCarouselSlideRights" class="w-full rounded-lg bg-zinc-900 border border-white/15 p-2 text-xs text-white">'+
       '<option value="unknown">Not reviewed</option><option value="original">Original photo / owned by us</option>'+
@@ -192,6 +198,11 @@
         syncControls();showPreview();
       });
     }
+    $('tonyCarouselSlideZoom').addEventListener('input',e=>{
+      const {slide}=selectSlide();if(!slide)return;
+      slide.zoom=clamp(e.target.value,100,220);
+      syncControls();showPreview();
+    });
     $('tonyCarouselSlideRights').addEventListener('change',e=>{
       const {slide}=selectSlide();if(!slide || !getImage(slide.id))return;
       slide.imagePermission=RIGHTS.has(e.target.value)?e.target.value:'unknown';
