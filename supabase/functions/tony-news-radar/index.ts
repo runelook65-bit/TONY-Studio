@@ -6,7 +6,9 @@ const SOURCES = [
   {name:"Gothamist",url:"https://gothamist.com/feed",host:"gothamist.com",weight:8},
   {name:"THE CITY",url:"https://www.thecity.nyc/rss/index.xml",host:"thecity.nyc",weight:9},
   {name:"City Limits",url:"https://citylimits.org/feed/",host:"citylimits.org",weight:7},
-  {name:"Hell Gate",url:"https://hellgatenyc.com/all-posts/rss",host:"hellgatenyc.com",weight:7}
+  {name:"Hell Gate",url:"https://hellgatenyc.com/all-posts/rss",host:"hellgatenyc.com",weight:7},
+  {name:"PIX11",url:"https://pix11.com/feed/",host:"pix11.com",weight:8},
+  {name:"amNewYork",url:"https://www.amny.com/feed/",host:"amny.com",weight:7}
 ];
 const BOROUGHS=[
  ["STATEN ISLAND",/\bstaten island\b|\bst\. george\b/i],
@@ -118,7 +120,7 @@ async function pollOne(src:(typeof SOURCES)[number],now:number){
  if(!res.ok)throw Error("Feed "+res.status);
  const xml=await res.text();
  if(xml.length>1250000||!/<(?:rss|feed|rdf:RDF)\b/i.test(xml))throw Error("Invalid RSS/Atom payload");
- return extract(xml,src,now).slice(0,10);
+ return extract(xml,src,now).slice(0,5);
 }
 async function poll(){
  const now=Date.now();
@@ -150,8 +152,16 @@ async function poll(){
 }
 async function radar(){
  const since=new Date(Date.now()-48*3600000).toISOString();
- const records=await read("tony_newsroom_items?select=id,headline,summary,source_name,source_url,source_published_at,borough,category,score,priority,source_count,supporting_sources,is_sensitive&source_published_at=gte."+encodeURIComponent(since)+"&editorial_status=in.(new,review,ready)&order=score.desc,source_published_at.desc&limit=35");
- return {stories:records||[],updatedAt:new Date().toISOString(),publication:"review-required",timezone:"America/New_York"};
+ const records=await read("tony_newsroom_items?select=id,headline,summary,source_name,source_url,source_published_at,borough,category,score,priority,source_count,supporting_sources,is_sensitive&source_published_at=gte."+encodeURIComponent(since)+"&editorial_status=in.(new,review,ready)&order=score.desc,source_published_at.desc&limit=120");
+ const perSource=new Map<string,number>();const balanced=[];
+ for(const row of records||[]){
+  const count=perSource.get(row.source_name)||0;
+  if(count>=5)continue;
+  perSource.set(row.source_name,count+1);
+  balanced.push(row);
+  if(balanced.length>=36)break;
+ }
+ return {stories:balanced,updatedAt:new Date().toISOString(),publication:"review-required",timezone:"America/New_York"};
 }
 Deno.serve(async(req:Request)=>{
  if(req.method==="OPTIONS")return json({},204);
