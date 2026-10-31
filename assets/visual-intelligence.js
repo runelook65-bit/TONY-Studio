@@ -182,8 +182,9 @@ function visualQueries(story){
  };
  const landmark=landmarks.find(([re])=>re.test(combined))?.[1];
  const topic=subject.find(([re])=>re.test(combined))?.[1]||generic[category]||generic['NYC NEWS'];
- const first=landmark ? landmark+' '+topic : borough+' '+topic;
- const fallback='New York City '+(generic[category]||generic['NYC NEWS']);
+ const combine=(location,subject)=>(location+' '+subject).replace(/\bCity city\b/i,'City');
+ const first=landmark ? combine(landmark,topic) : combine(borough,topic);
+ const fallback=combine('New York City',generic[category]||generic['NYC NEWS']);
  return [...new Set([first,fallback])].map(q=>q.slice(0,110));
 }
 function showSourceReference(story){
