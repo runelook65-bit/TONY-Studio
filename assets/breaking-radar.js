@@ -46,7 +46,7 @@
    const buttons=document.createElement('div');buttons.className='mt-3 flex gap-2';
    const prepare=document.createElement('button');
    prepare.type='button';prepare.className='tony-radar-prepare';
-   prepare.textContent='Prepare TONY Post';
+   prepare.textContent='Prepare Post + Find Images';
    prepare.addEventListener('click',()=>apply(story));
    const source=document.createElement('a');source.className='tony-radar-source';
    source.href=story.source_url;source.target='_blank';source.rel='noopener noreferrer';
@@ -54,7 +54,7 @@
    buttons.append(prepare,source);box.append(top,headline,summary,details,buttons);target.append(box);
   });
  }
- function apply(story){
+ async function apply(story){
   const app=window.TONYStudio;
   const newsroom=window.TONYNewsroom;
   if(!app||!newsroom)return setStatus('Studio editor is not ready.',true);
@@ -75,9 +75,18 @@
   app.renderCanvas();
   const draft=$('tonyDraftMessage');if(draft)draft.textContent='Imported from '+story.source_name+'. Independent verification and licensed imagery are REQUIRED.';
   app.showToast('News tip loaded · verify before publishing');
-  setStatus('Opened in editor. Verify the facts and choose an authorized image before posting.');
-  if(window.TONYMobile?.switchView)window.TONYMobile.switchView('story');
-  $('headlineInput')?.focus({preventScroll:true});
+  if(window.TONYMobile?.switchView)window.TONYMobile.switchView('design');
+  if(window.TONYVisual?.suggestForStory){
+   setStatus('Draft created. Finding suitable licensed imagery; review each suggestion before posting.');
+   try {
+    const count=await window.TONYVisual.suggestForStory(story);
+    setStatus(count+' reuse-eligible photo suggestions prepared. Photo rights and story facts still require review.');
+   }catch(err){
+    setStatus('Draft prepared; image recommendations unavailable. Use Upload Photo or Gemini illustration.',true);
+   }
+  } else {
+   setStatus('Draft prepared. Open the Design step to add an authorized photo.');
+  }
  }
  async function refresh(){
   if(loading)return;loading=true;

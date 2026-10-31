@@ -68,3 +68,15 @@ Never commit or display the ingestion token. It is stored in Supabase Vault as `
 - No unattended scheduling or Instagram publication until a robust approval workflow, audit log, licensed image selection and Meta permissions are configured.
 - Database editorial statuses are currently a persistent ingestion queue; using Prepare TONY Post fills the local editor and does not mutate the server-side editorial status.
 - The browser refreshes its suggestions while visible (every 90 seconds); the server polls every 10 minutes.
+
+## Automatic image suggestions (visual bridge)
+
+When an editor selects **Prepare Post + Find Images** in Breaking News Radar:
+
+1. The article headline, summary and borough are transferred to the TONY editor, and any previous image is cleared.
+2. The Design stage opens and Visual Intelligence automatically searches Wikimedia Commons for relevant reuse-eligible *archive* photography using geography, subject and category. A broader NYC query is attempted if the first search yields no results.
+3. The publisher's original image is displayed in a separate **SOURCE PHOTO — REFERENCE ONLY** area, when metadata is available. This is **not** imported into the post canvas; an editorial license/permission is required before reusing it.
+4. The editor can pick a verified-license Commons result (with source/author attribution), use an authorized upload, optionally browse Pexels, or generate a disclosed Gemini conceptual illustration when enabled.
+5. The existing TONY photo filters, crop, typography and logo are then applied to the resulting canvas, followed by human verification and publication consent.
+
+Importantly, these are **suggestions**, not auto-selected documentary evidence. A keyword-match cannot prove a photo depicts the reported event. Gemini's paid generation is never triggered without the user's explicit confirmation, and unknown image rights stay unapproved.
