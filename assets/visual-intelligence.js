@@ -4,6 +4,7 @@
 const $=id=>document.getElementById(id);
 const S=()=>window.TONYStudio.state;
 let items=[],activeRequest=false,settings=null;
+let sourcePreviewRequest=0;
 
 function info(msg,err=false){
  const el=$('tonyVisualMessage'); if(!el)return;
@@ -77,7 +78,8 @@ async function search(){
   else $('tonyVisualAttribution').hidden=true;
   info(items.length?items.length+' photos found. Check the source, license, date and relevance before using.':
      'No suitable licensed photos found. Try a broader borough or subject name.',!items.length);
- }catch(e){info(e.message,true)}
+  return items.length;
+ }catch(e){info(e.message,true);return 0;}
  finally{setBusy(false)}
 }
 function editorialImage({kind,credit}){
@@ -147,6 +149,101 @@ async function generate(){
  }catch(e){info(e.message,true)}
  finally{setBusy(false)}
 }
+
+/* Article-first visual matching. These are safe *subject* suggestions, never purported event photography. */
+function visualQueries(story){
+ const borough=['MANHATTAN','BROOKLYN','QUEENS','BRONX','STATEN ISLAND'].includes(story?.borough)
+  ? story.borough : 'New York City';
+ const combined=(String(story?.headline||'')+' '+String(story?.summary||'')).slice(0,550);
+ const category=String(story?.category||'NYC NEWS').toUpperCase();
+ const landmarks=[
+  [/\bhunts point\b/i,'Hunts Point Bronx'],[/\btimes square\b/i,'Times Square'],
+  [/\bcentral park\b/i,'Central Park'],[/\bcity hall\b/i,'New York City Hall'],
+  [/\bbrooklyn bridge\b/i,'Brooklyn Bridge'],[/\bconey island\b/i,'Coney Island'],
+  [/\bflushing\b/i,'Flushing Queens'],[/\bastoria\b/i,'Astoria Queens'],
+  [/\bjfk\b|john f kennedy airport/i,'JFK Airport'],[/\blaguardia\b/i,'LaGuardia Airport'],
+  [/\bstaten island ferry\b/i,'Staten Island Ferry']
+ ];
+ const subject=[
+  [/\be-bike\b|\blithium\b|\bbattery\b/i,'electric bicycle'],
+  [/\bsubway\b|\btrain\b|\bmta\b/i,'subway train station'],
+  [/\bbus\b|\btraffic\b/i,'city bus traffic'],
+  [/\bapartment\b|\brent\b|\btenant\b|\bhousing\b/i,'apartment buildings'],
+  [/\bschool\b|\beducation\b/i,'public school building'],
+  [/\brestaurant\b|\bfood\b/i,'restaurant streetscape'],
+  [/\bflood\b|\brain\b/i,'rainy streetscape'],
+  [/\bsnow\b|\bstorm\b/i,'city winter skyline'],
+  [/\bmayor\b|\bcouncil\b|\belection\b/i,'city hall exterior']
+ ];
+ const generic={
+  TRANSIT:'subway station',WEATHER:'city skyline weather',HOUSING:'apartment buildings',
+  POLITICS:'city hall exterior','PUBLIC SAFETY':'city streetscape',BUSINESS:'financial district buildings',
+  'CITY LIFE':'neighborhood street photography','NYC NEWS':'New York City skyline'
+ };
+ const landmark=landmarks.find(([re])=>re.test(combined))?.[1];
+ const topic=subject.find(([re])=>re.test(combined))?.[1]||generic[category]||generic['NYC NEWS'];
+ const first=landmark ? landmark+' '+topic : borough+' '+topic;
+ const fallback='New York City '+(generic[category]||generic['NYC NEWS']);
+ return [...new Set([first,fallback])].map(q=>q.slice(0,110));
+}
+function showSourceReference(story){
+ const container=$('tonyVisualSourceReference');
+ if(!container)return Promise.resolve();
+ const sourceUrl=safeUrl(story?.source_url);
+ const current=++sourcePreviewRequest;
+ container.replaceChildren();
+ if(!sourceUrl)return Promise.resolve();
+ const title=document.createElement('p');
+ title.textContent='Checking the original article for a photo reference…';
+ title.className='text-xs text-zinc-400';
+ container.append(title);
+ return fetch('/api/article?url='+encodeURIComponent(sourceUrl),{headers:{accept:'application/json'}})
+  .then(async r=>{if(!r.ok)throw Error('Article preview unavailable');return r.json()})
+  .then(article=>{
+   if(current!==sourcePreviewRequest)return;
+   container.replaceChildren();
+   if(article.sourceUrl!==sourceUrl||!safeUrl(article.imageUrl)){
+    title.textContent='No source photo preview available. Check the original article below.';
+    container.append(title);return;
+   }
+   const label=document.createElement('p');
+   label.className='text-[11px] font-black tracking-wide text-amber-300';
+   label.textContent='SOURCE PHOTO · REFERENCE ONLY';
+   const row=document.createElement('div');row.className='flex items-center gap-3 mt-2';
+   const img=document.createElement('img');img.src=article.imageUrl;img.alt='Preview supplied by original publisher; reuse rights not established';
+   img.loading='lazy';img.referrerPolicy='no-referrer';img.className='w-24 h-20 rounded-lg object-cover bg-zinc-900';
+   const box=document.createElement('div');box.className='flex-1 min-w-0';
+   const desc=document.createElement('p');desc.className='text-[11px] text-zinc-400';
+   desc.textContent='This is the publisher’s reference image. Do not copy it into a TONY post without a separate license or explicit permission.';
+   const link=document.createElement('a');link.href=sourceUrl;link.target='_blank';link.rel='noopener noreferrer';
+   link.className='inline-block mt-1 text-[#FFC300] text-xs underline';link.textContent='Review original article ↗';
+   box.append(desc,link);row.append(img,box);container.append(label,row);
+  }).catch(()=>{
+   if(current!==sourcePreviewRequest)return;
+   container.replaceChildren();
+   title.textContent='Publisher photo preview unavailable. Open the article to review visual context.';
+   const link=document.createElement('a');link.href=sourceUrl;link.target='_blank';link.rel='noopener noreferrer';
+   link.className='block mt-1 text-[#FFC300] text-xs underline';link.textContent='Read original article ↗';
+   container.append(title,link);
+  });
+}
+async function suggestForStory(story){
+ if(!$('tonyVisualPanel')||!story||typeof story!=='object')return 0;
+ const suggestions=visualQueries(story);
+ $('tonyVisualProvider').value='commons';
+ $('tonyVisualQuery').value=suggestions[0];
+ const preview=showSourceReference(story);
+ info('Finding reuse-eligible archive imagery related to the article topic. Selection still requires editorial review.');
+ let count=await search();
+ if(!count&&suggestions[1]&&suggestions[1]!==suggestions[0]){
+  $('tonyVisualQuery').value=suggestions[1];
+  count=await search();
+ }
+ await preview;
+ if(!count)info('No matching Commons photos. Try Pexels (if configured), upload your own licensed photo, or create a labeled AI illustration.',true);
+ return count;
+}
+
 function mount(){
  const section=$('dropZone')?.parentElement;
  if(!section||$('tonyVisualPanel')||!window.TONYStudio)return;
@@ -167,6 +264,7 @@ function mount(){
  '<select id="tonyVisualProvider" class="bg-zinc-900 text-white border border-white/15 rounded-lg p-2 text-xs">'+
  '<option value="commons">Wikimedia Commons</option><option id="tonyVisualPexels" value="pexels">Pexels (stock)</option></select>'+
  '<button id="tonyVisualPrefill" type="button" class="text-xs text-[#FFC300] font-semibold">Use story keywords</button></div>'+
+ '<div id="tonyVisualSourceReference" class="mt-3 rounded-xl border border-amber-300/20 bg-zinc-900/60 p-3" role="note"></div>'+ 
  '<div id="tonyVisualResults" class="tony-visual-results mt-3" aria-label="Photo search results"></div>'+
  '<p id="tonyVisualAttribution" hidden class="text-[11px] text-zinc-400 mt-2">Photos provided by <a class="underline text-[#FFC300]" href="https://www.pexels.com/" target="_blank" rel="noopener noreferrer">Pexels</a>.</p>'+
  '<p class="text-[11px] text-amber-300 mt-3">Editorial check: stock/archive imagery is not necessarily from this event. Confirm accuracy and image rights before publication.</p>'+
@@ -190,6 +288,6 @@ function mount(){
  $('tonyVisualQuery').value=photoSearchQuery();
  refreshConfig();
 }
-window.TONYVisual={mount,applyDataImage,photoSearchQuery};
+window.TONYVisual={mount,applyDataImage,photoSearchQuery,visualQueries,suggestForStory};
 document.addEventListener('DOMContentLoaded',mount);
 })();
