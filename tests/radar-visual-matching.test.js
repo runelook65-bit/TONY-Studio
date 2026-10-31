@@ -35,7 +35,7 @@ test('automated visual queries use borough, story subject and safe generic fallb
  const {w,dom}=setup();
  const q=w.TONYVisual.visualQueries(story);
  assert.match(q[0],/Hunts Point Bronx electric bicycle/);
- assert.equal(q[1],'New York City city streetscape');
+ assert.equal(q[1],'New York City streetscape');
  const safety=w.TONYVisual.visualQueries({headline:'Shooting involving a victim in Queens',
  summary:'Police investigating',borough:'QUEENS',category:'PUBLIC SAFETY'});
  assert.ok(!safety[0].includes('shooting'));
@@ -62,7 +62,7 @@ test('no Commons photo causes safe general query fallback',async()=>{
  assert.equal(count,0);
  const searches=calls.filter(x=>x.includes('/api/visual/search'));
  assert.equal(searches.length,2);
- assert.match(decodeURIComponent(searches[1]),/New York City city streetscape/);
+ assert.match(decodeURIComponent(searches[1]),/New York City streetscape/);
  assert.equal(state.activeImage,null);
  dom.window.close();
 });
