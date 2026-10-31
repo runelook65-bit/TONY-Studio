@@ -31,7 +31,7 @@ function setup({withPhotos=true}={}){
 }
 const story={headline:'Bronx e-bike fire, officials respond in Hunts Point',summary:'Battery incident reported in the Bronx',
  borough:'BRONX',category:'PUBLIC SAFETY',source_url:'https://gothamist.com/news/bronx-ebike'};
-test('automated visual queries use borough, story subject and safe generic fallback',()=>{
+test('automated visual queries use borough, story subject and safe generic fallback',async()=>{
  const {w,dom}=setup();
  const q=w.TONYVisual.visualQueries(story);
  assert.match(q[0],/Hunts Point Bronx electric bicycle/);
@@ -41,6 +41,7 @@ test('automated visual queries use borough, story subject and safe generic fallb
  assert.ok(!safety[0].includes('shooting'));
  assert.ok(!safety[0].includes('victim'));
  assert.ok(safety[0].includes('city streetscape'));
+ await new Promise(resolve=>setTimeout(resolve,25));
  dom.window.close();
 });
 test('selection automatically finds source-labeled photos, but does not inject unlicensed article photo',async()=>{
@@ -62,7 +63,7 @@ test('no Commons photo causes safe general query fallback',async()=>{
  assert.equal(count,0);
  const searches=calls.filter(x=>x.includes('/api/visual/search'));
  assert.equal(searches.length,2);
- assert.match(decodeURIComponent(searches[1]),/New York City streetscape/);
+ assert.equal(new URL('https://tony-studio-lmeo.vercel.app'+searches[1]).searchParams.get('q'),'New York City streetscape');
  assert.equal(state.activeImage,null);
  dom.window.close();
 });
