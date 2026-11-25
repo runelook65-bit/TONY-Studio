@@ -50,13 +50,13 @@
   addText("Voiceover script",draft.script);
   addText("Instagram caption",draft.caption);
   if(Array.isArray(draft.on_screen_text)&&draft.on_screen_text.length){
-   addText("On-screen text",draft.on_screen_text.map(x=>"• "+String(x)).join("\\n"));
+   addText("On-screen text",draft.on_screen_text.map(x=>"• "+String(x)).join("\n"));
   }
   if(Array.isArray(draft.fact_check_checklist)&&draft.fact_check_checklist.length){
-   addText("Editor fact-check checklist",draft.fact_check_checklist.map(x=>"□ "+String(x)).join("\\n"));
+   addText("Editor fact-check checklist",draft.fact_check_checklist.map(x=>"□ "+String(x)).join("\n"));
   }
   if(Array.isArray(draft.uncertainties)&&draft.uncertainties.length){
-   addText("Uncertainties / reporting gaps",draft.uncertainties.map(x=>"• "+String(x)).join("\\n"));
+   addText("Uncertainties / reporting gaps",draft.uncertainties.map(x=>"• "+String(x)).join("\n"));
   }
   if(Array.isArray(result.sources)&&result.sources.length){
    const section=document.createElement("div");section.className="mt-3";
@@ -77,7 +77,7 @@
   copy.className="mt-3 w-full rounded-lg bg-[#FFC300] text-black font-black text-xs py-2.5";
   copy.textContent="Copy Hook + Script + Caption";
   copy.addEventListener("click",async()=>{
-   const text=["HOOK: "+String(draft.hook||""),"SCRIPT: "+String(draft.script||""),"CAPTION: "+String(draft.caption||"")].join("\\n\\n");
+   const text=["HOOK: "+String(draft.hook||""),"SCRIPT: "+String(draft.script||""),"CAPTION: "+String(draft.caption||"")].join("\n\n");
    try{await navigator.clipboard.writeText(text);copy.textContent="Copied";setTimeout(()=>{copy.textContent="Copy Hook + Script + Caption";},1800);}
    catch{copy.textContent="Clipboard unavailable on this browser";}
   });
