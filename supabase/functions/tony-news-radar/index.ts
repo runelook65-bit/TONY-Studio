@@ -8,7 +8,9 @@ const SOURCES = [
   {name:"City Limits",url:"https://citylimits.org/feed/",host:"citylimits.org",weight:7},
   {name:"Hell Gate",url:"https://hellgatenyc.com/all-posts/rss",host:"hellgatenyc.com",weight:7},
   {name:"PIX11",url:"https://pix11.com/feed/",host:"pix11.com",weight:8},
-  {name:"amNewYork",url:"https://www.amny.com/feed/",host:"amny.com",weight:7}
+  {name:"amNewYork",url:"https://www.amny.com/feed/",host:"amny.com",weight:7},
+  {name:"The New York Times — New York",url:"https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/nyregion/rss.xml",host:"nytimes.com",weight:9},
+  {name:"NY1",url:"https://www.ny1.com/services/contentfeed.nyc%7Call-boroughs%7Cnews.landing.rss",host:"ny1.com",weight:9}
 ];
 const BOROUGHS=[
  ["STATEN ISLAND",/\bstaten island\b|\bst\. george\b/i],
@@ -52,11 +54,27 @@ function normalizeUrl(raw:unknown,host:string):string|null{
  }catch{return null;}
 }
 const words=(str:string)=>[...new Set(plain(str).toLowerCase().replace(/[^a-z0-9 ]+/g," ").split(/\s+/).filter(x=>x.length>3&&!DROP.has(x)))];
+function scoreParts(text:string,hours:number,sourceCount:number,sourceWeight:number){
+ const impact= /\b(evacuat|shutdown|major outage|fatal|killed|citywide|budget|mayor|housing crisis|strike|flood|storm warning|subway shutdown|mass transit)\b/i.test(text)?25:
+  /\b(mta|subway|rent|tenant|school|hospital|election|city council|public safety|fire|police|business closure)\b/i.test(text)?18:12;
+ const recency=hours<=1?20:hours<=3?17:hours<=8?13:hours<=24?8:3;
+ const publicInterest=/\b(mayor|city council|citywide|rent|housing|subway|mta|school|hospital|election|budget|tax|public safety|nycha)\b/i.test(text)?20:
+  /\b(queens|brooklyn|bronx|manhattan|staten island|commute|restaurant|park|small business)\b/i.test(text)?15:9;
+ const sourceSupport=sourceCount>=3?15:sourceCount===2?10:5;
+ const visual=/\b(fire|flood|snow|storm|subway|bridge|building|street|protest|parade|construction|airport|port|park|landmark)\b/i.test(text)?10:
+  /\b(weather|transit|housing|restaurant|school|hospital)\b/i.test(text)?7:4;
+ const discussion=/\b(election|mayor|rent|housing|tax|budget|protest|strike|police|school|immigration|congestion pricing)\b/i.test(text)?10:
+  /\b(mta|business|education|health|development|climate)\b/i.test(text)?7:4;
+ const sourceConfidence=Math.max(0,Math.min(100,sourceWeight*10));
+ const score_breakdown={impact,recency,public_interest:publicInterest,source_support:sourceSupport,visual_potential:visual,discussion_potential:discussion};
+ const score=Object.values(score_breakdown).reduce((sum,value)=>sum+value,0);
+ return {score,score_breakdown,source_confidence:sourceConfidence};
+}
 function similar(a:string,b:string){
  const aw=words(a),bw=words(b);if(aw.length<3||bw.length<3)return 0;
  return aw.filter(x=>bw.includes(x)).length/Math.min(aw.length,bw.length);
 }
-type Candidate={headline:string;summary:string;source_name:string;source_url:string;source_published_at:string;borough:string;category:string;score:number;priority:string;editorial_status:string;requires_verification:boolean;photo_rights:string;is_sensitive:boolean;category_reason:string;source_count:number;supporting_sources:Array<{source_name:string;source_url:string}>;event_key:string};
+type Candidate={headline:string;summary:string;source_name:string;source_url:string;source_published_at:string;borough:string;category:string;score:number;score_breakdown:Record<string,number>;source_confidence:number;priority:string;editorial_status:string;requires_verification:boolean;photo_rights:string;is_sensitive:boolean;category_reason:string;source_count:number;supporting_sources:Array<{source_name:string;source_url:string}>;event_key:string};
 function extract(xml:string,src:(typeof SOURCES)[number],now:number):Candidate[]{
  const parsed=new XMLParser({ignoreAttributes:false,removeNSPrefix:true,attributeNamePrefix:"@_",parseTagValue:false,trimValues:true,processEntities:true}).parse(xml);
  const raw=parsed?.rss?.channel?.item||parsed?.feed?.entry||[];
@@ -79,12 +97,14 @@ function extract(xml:string,src:(typeof SOURCES)[number],now:number):Candidate[]
   const urgent=URGENT.test(headline);
   const sensitive=SENSITIVE.test(text);
   const hours=(now-date)/3600000;
-  const freshness=hours<=1?22:hours<=3?18:hours<=8?13:hours<=24?8:3;
-  const score=Math.max(0,Math.min(100,22+src.weight+freshness+(urgent?18:0)+(locations.length?8:3)+(/mta|nypd|nycha|mayor|city council|department of/i.test(text)?7:0)-(sensitive?6:0)));
+  if(src.weight<7)continue;
+  const scored=scoreParts(text,hours,1,src.weight);
+  const score=scored.score;
   arr.push({headline,summary,source_name:src.name,source_url,source_published_at:new Date(date).toISOString(),borough,category,
-   score,priority:score>=75&&urgent&&!sensitive?"breaking":score>=62?"high":"normal",
+   score,score_breakdown:scored.score_breakdown,source_confidence:scored.source_confidence,
+   priority:score>=85&&urgent&&!sensitive?"breaking":score>=70?"high":"normal",
    editorial_status:"new",requires_verification:true,photo_rights:"unknown",is_sensitive:sensitive,
-   category_reason:urgent?"Urgent keyword — NOT independently verified":"Local relevance + recency",
+   category_reason:urgent?"Urgent keyword — NOT independently verified":"NYC relevance + weighted editorial score",
    source_count:1,supporting_sources:[{source_name:src.name,source_url}],
    event_key:""});
  }
@@ -135,9 +155,13 @@ async function poll(){
     (x.borough===c.borough||x.borough==="NEW YORK CITY"||c.borough==="NEW YORK CITY")&&similar(x.headline,c.headline)>=0.72);
   if(match){
    if(!match.supporting_sources.some(x=>x.source_name===c.source_name)){
-    match.supporting_sources.push({source_name:c.source_name,source_url:c.source_url});
-    match.source_count=match.supporting_sources.length;
-    match.score=Math.min(100,match.score+8);
+    if(match.source_count<12)match.supporting_sources.push({source_name:c.source_name,source_url:c.source_url});
+    match.source_count=Math.min(12,match.supporting_sources.length);
+    const hours=(now-Date.parse(match.source_published_at))/3600000;
+    const merged=scoreParts(match.headline+" "+match.summary,hours,match.source_count,Math.max(match.source_confidence,c.source_confidence)/10);
+    match.score=merged.score;
+    match.score_breakdown=merged.score_breakdown;
+    match.source_confidence=Math.max(match.source_confidence,c.source_confidence);
    }
   }else grouped.push(c);
  }
@@ -152,7 +176,7 @@ async function poll(){
 }
 async function radar(){
  const since=new Date(Date.now()-48*3600000).toISOString();
- const records=await read("tony_newsroom_items?select=id,headline,summary,source_name,source_url,source_published_at,borough,category,score,priority,source_count,supporting_sources,is_sensitive&source_published_at=gte."+encodeURIComponent(since)+"&editorial_status=in.(new,review,ready)&order=score.desc,source_published_at.desc&limit=120");
+ const records=await read("tony_newsroom_items?select=id,headline,summary,source_name,source_url,source_published_at,borough,category,score,score_breakdown,source_confidence,priority,source_count,supporting_sources,is_sensitive&source_published_at=gte."+encodeURIComponent(since)+"&editorial_status=in.(new,review,ready)&order=score.desc,source_published_at.desc&limit=120");
  const perSource=new Map<string,number>();const balanced=[];
  for(const row of records||[]){
   const count=perSource.get(row.source_name)||0;

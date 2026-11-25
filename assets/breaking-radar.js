@@ -42,6 +42,7 @@
    details.append(tag(story.source_name+' · '+story.category,''));
    details.append(tag('Priority '+story.score+'/100',''));
    if(story.source_count>1)details.append(tag(story.source_count+' sources','text-[#FFC300]'));
+   if(story.source_confidence!==undefined)details.append(tag('Publisher trust '+story.source_confidence+'/100',''));
    if(story.is_sensitive)details.append(tag('Sensitive · extra verification','text-amber-300'));
    const buttons=document.createElement('div');buttons.className='mt-3 flex gap-2';
    const prepare=document.createElement('button');
@@ -99,7 +100,7 @@
    stories=Array.isArray(data.stories)?data.stories.filter(s=>s&&typeof s.headline==='string'&&typeof s.source_url==='string'&&/^https:\/\//.test(s.source_url)):[];
    latest=data.updatedAt||new Date().toISOString();
    show();
-   setStatus('Checked '+new Date(latest).toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'})+' ET · Updated by server every 10 min · Editor approval required');
+   setStatus('Checked '+new Date(latest).toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'})+' ET · Scheduled ingestion every 3 hours · Editor approval required');
   }catch(err){setStatus(err.message||'Could not load the newsroom feed.',true);}
   finally{loading=false;$('tonyRadarRefresh').disabled=false;}
  }
@@ -112,7 +113,7 @@
   panel.innerHTML=
    '<div class="flex justify-between gap-3 items-center"><div>'+
    '<div class="flex gap-2 items-center"><span class="tony-radar-live-dot"></span><h2 class="font-black text-white tracking-wide text-sm uppercase">Breaking News Radar</h2></div>'+
-   '<p class="mt-1 text-[11px] text-zinc-400">NYC stories ranked by timeliness, relevance & source coverage.</p></div>'+
+   '<p class="mt-1 text-[11px] text-zinc-400">NYC stories ranked by impact, recency, public interest & source support.</p></div>'+
    '<button type="button" id="tonyRadarRefresh" class="tony-radar-refresh">↻ Refresh</button></div>'+
    '<div class="mt-3 flex flex-wrap gap-2 items-center justify-between">'+
    '<span id="tonyRadarCount" class="text-[10px] text-[#FFC300] font-black">LOADING</span>'+
