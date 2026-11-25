@@ -24,7 +24,7 @@
   const result=story.ai_draft;
   if(!result||result.status!=="generated"||!result.draft){
    if(story.ai_generation_status==="failed"){
-    const pending=tag("CLAUDE DRAFT FAILED · WILL RETRY","text-[10px] text-amber-300 mt-2");
+    const pending=tag("CLAUDE DRAFT FAILED · CHECK LOGS","text-[10px] text-amber-300 mt-2");
     box.append(pending);
    }else if(story.ai_generation_status==="pending"){
     box.append(tag("CLAUDE DRAFT QUEUED","text-[10px] text-zinc-500 mt-2"));
