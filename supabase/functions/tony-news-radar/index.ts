@@ -190,7 +190,8 @@ async function generateClaudeDraft(row:Record<string,unknown>){
   "Never invent facts, numbers, quotes, identities, causes, locations or outcomes. Do not treat allegations as proven. Distinguish reported facts, official statements, allegations and unknowns.",
   "If evidence is thin, sources conflict, or the story is not sufficiently newsworthy, set editorial_verdict to needs_more_reporting or hold and explain why. Do not manufacture a confident script.",
   "Write for a US audience in natural American English. Make the opening specific and compelling, not clickbait. Voiceover should be 80–110 words for approximately 35–50 seconds.",
-  "Return only valid JSON with keys: editorial_verdict (ready_for_editor|needs_more_reporting|hold), angle, hook, script, on_screen_text (array of 4–6 short lines), caption, cta, hashtags (array of 3–5), fact_check_checklist (array), uncertainties (array), estimated_seconds (number).",
+  "Also write card_deck: 35–50 words for the graphic directly below the headline. It must explain what happened, include the strongest verified concrete detail (number, decision, location, consequence or example), and end with a meaningful implication or question only when the reporting supports it. Never use vague teaser copy, generic filler, or a rhetorical question that withholds the actual news. This deck must stand alone and be readable in four short visual lines.",
+  "Return only valid JSON with keys: editorial_verdict (ready_for_editor|needs_more_reporting|hold), angle, card_deck, hook, script, on_screen_text (array of 4–6 short lines), caption, cta, hashtags (array of 3–5), fact_check_checklist (array), uncertainties (array), estimated_seconds (number).",
   "The script must not include facts unsupported by the sources. Do not put citations or URLs inside the voiceover. Do not say the story is verified merely because multiple websites repeat the same wire copy.",
   "Do not recommend publishing sensitive crime, death, minors, or allegations without explicit caution and additional verification. No graphic or exploitative framing."
  ].join(" ");
@@ -227,8 +228,9 @@ async function generateClaudeDraft(row:Record<string,unknown>){
  const content=Array.isArray(responseData.content)?responseData.content as Array<Record<string,unknown>>:[];
  const text=content.filter(x=>x.type==="text").map(x=>String(x.text||"")).join("\n").trim();
  const draft=extractModelJson(text);
- const required=["hook","script","caption","cta"];
+ const required=["card_deck","hook","script","caption","cta"];
  for(const key of required)if(typeof draft[key]!=="string"||!String(draft[key]).trim())throw Error("Claude draft is missing "+key);
+ if(String(draft.card_deck).trim().split(/\\s+/).length<25||String(draft.card_deck).trim().split(/\\s+/).length>60)throw Error("Claude card deck must contain 25–60 words");
  if(!["ready_for_editor","needs_more_reporting","hold"].includes(String(draft.editorial_verdict)))throw Error("Claude draft has an invalid editorial verdict");
  if(!Array.isArray(draft.fact_check_checklist)||!Array.isArray(draft.uncertainties)||!Array.isArray(draft.on_screen_text)||!Array.isArray(draft.hashtags))throw Error("Claude draft is missing review fields");
  const sources=getResearchSources(content);
