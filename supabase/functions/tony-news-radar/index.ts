@@ -212,10 +212,11 @@ async function generateClaudeDraft(row:Record<string,unknown>){
   },
   research_instructions:"Search for the exact story and recent official or independent corroboration. Check whether the story has changed since initial publication. If no reliable corroboration exists, say so."
  };
+ const messages:Array<{role:"user"|"assistant";content:string|unknown[]}>= [{role:"user",content:JSON.stringify(user)}];
  const body={
   model,max_tokens:2200,system,
   tools:[{type:"web_search_20260318",name:"web_search",max_uses:2,response_inclusion:"excluded"}],
-  messages:[{role:"user",content:JSON.stringify(user)}]
+  messages
  };
  let responseData:Record<string,unknown>|null=null;
  for(let attempt=0;attempt<3;attempt++){
@@ -226,7 +227,7 @@ async function generateClaudeDraft(row:Record<string,unknown>){
   responseData=await response.json() as Record<string,unknown>;
   if(!response.ok)throw Error("Anthropic API "+response.status+": "+String((responseData as Record<string,unknown>).error||"request failed").slice(0,180));
   if(responseData.stop_reason==="pause_turn"&&Array.isArray(responseData.content)){
-   body.messages.push({role:"assistant",content:responseData.content});
+   messages.push({role:"assistant",content:responseData.content});
    continue;
   }
   break;
