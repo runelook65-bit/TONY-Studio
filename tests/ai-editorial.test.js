@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const radar=fs.readFileSync(path.join(__dirname,'../assets/breaking-radar.js'),'utf8');
 const edge=fs.readFileSync(path.join(__dirname,'../supabase/functions/tony-news-radar/index.ts'),'utf8');
-const migration=fs.readFileSync(path.join(__dirname,'../supabase/migrations/20261125005500_add_claude_editorial_drafts.sql'),'utf8');
+const migration=fs.readFileSync(path.join(__dirname,'../supabase/migrations/20261125005814_add_claude_editorial_drafts.sql'),'utf8');
 const index=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 
 test('Claude research drafts are generated only server-side with a secret key',()=>{
