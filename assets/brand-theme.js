@@ -38,6 +38,8 @@
    button.setAttribute('aria-pressed',String(selected));
    button.classList.toggle('tony-theme-selected',selected);
   });
+  const description=$('tonyBrandThemeDescription');
+  if(description)description.textContent=THEMES[state.brandTheme].description;
  }
  function mount(){
   const app=root.TONYStudio;if(!app||$('tonyBrandThemePanel'))return;
