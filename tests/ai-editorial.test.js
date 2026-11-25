@@ -39,5 +39,5 @@ test('research citations and draft fields are stored in the newsroom record',()=
 });
 
 test('Radar script cache is invalidated for the new editor UI',()=>{
-  assert.match(index,/breaking-radar\.js\?v=3/);
+  assert.match(index,/breaking-radar\.js\?v=4/);
 });
