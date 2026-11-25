@@ -32,13 +32,26 @@ const URGENT=/\b(breaking|just announced|emergency|evacuat(?:ed|ion)|shutdown|su
 const SENSITIVE=/\b(shooting|killed|murder|homicide|suicide|assault|death|fatal|arrested|sexual|abuse|victim|child)\b/i;
 const LOCAL=/\b(new york city|new yorkers|nyc|mta|nypd|nycha|bronx|queens|brooklyn|manhattan|staten island|harlem|city council|mayor)\b/i;
 const DROP=new Set(["the","for","with","from","this","that","have","your","about","over","will","city","new","york","nyc","after","their","they","what","where","when","into","says","said"]);
-const ORIGIN="https://tony-studio-lmeo.vercel.app";
+const ALLOWED_ORIGINS=new Set([
+ "https://tony-studio-lmeo.vercel.app",
+ "https://tony-studio.vercel.app",
+ "https://tony-studiov1.vercel.app"
+]);
 const SUPABASE_URL=Deno.env.get("SUPABASE_URL")||"";
 const SERVICE_KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||"";
-const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{
- "content-type":"application/json; charset=utf-8","cache-control":"no-store",
- "access-control-allow-origin":ORIGIN,"access-control-allow-methods":"GET, POST, OPTIONS","access-control-allow-headers":"content-type, x-tony-cron"
-}});
+function corsHeaders(req:Request):Record<string,string>{
+ const origin=req.headers.get("origin")||"";
+ const headers:Record<string,string>={
+  "content-type":"application/json; charset=utf-8",
+  "cache-control":"no-store",
+  "access-control-allow-methods":"GET, POST, OPTIONS",
+  "access-control-allow-headers":"content-type, x-tony-cron",
+  "vary":"Origin"
+ };
+ if(ALLOWED_ORIGINS.has(origin))headers["access-control-allow-origin"]=origin;
+ return headers;
+}
+const json=(req:Request,body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:corsHeaders(req)});
 function plain(input:unknown):string{
  const x=typeof input==="string"?input:typeof input==="object"&&input!==null?String((input as Record<string,unknown>)["#text"]||(input as Record<string,unknown>)["__cdata"]||""):String(input||"");
  return x.replace(/<[^>]*>/g," ").replace(/&(?:amp|lt|gt|quot|apos|nbsp|#39);/gi,m=>({
@@ -188,13 +201,13 @@ async function radar(){
  return {stories:balanced,updatedAt:new Date().toISOString(),publication:"review-required",timezone:"America/New_York"};
 }
 Deno.serve(async(req:Request)=>{
- if(req.method==="OPTIONS")return json({},204);
+ if(req.method==="OPTIONS")return new Response(null,{status:204,headers:corsHeaders(req)});
  if(req.method==="GET") {
-  try{return json(await radar());}catch(e){return json({error:"Newsroom Radar unavailable",reason:String(e).slice(0,150)},503);}
+  try{return json(req,await radar());}catch(e){return json(req,{error:"Newsroom Radar unavailable",reason:String(e).slice(0,150)},503);}
  }
- if(req.method!=="POST")return json({error:"Method not allowed"},405);
+ if(req.method!=="POST")return json(req,{error:"Method not allowed"},405);
  try{
-  if(!await authorized(req))return json({error:"Unauthorized"},401);
-  return json(await poll());
- }catch(e){return json({error:"Ingestion failed",reason:String(e).slice(0,230)},500);}
+  if(!await authorized(req))return json(req,{error:"Unauthorized"},401);
+  return json(req,await poll());
+ }catch(e){return json(req,{error:"Ingestion failed",reason:String(e).slice(0,230)},500);}
 });
