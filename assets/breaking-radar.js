@@ -42,7 +42,7 @@
    details.append(tag(story.source_name+' · '+story.category,''));
    details.append(tag('Priority '+story.score+'/100',''));
    if(story.source_count>1)details.append(tag(story.source_count+' sources','text-[#FFC300]'));
-   if(story.source_confidence!==undefined)details.append(tag('Source confidence '+story.source_confidence+'/100',''));
+   if(story.source_confidence!==undefined)details.append(tag('Publisher trust '+story.source_confidence+'/100',''));
    if(story.is_sensitive)details.append(tag('Sensitive · extra verification','text-amber-300'));
    const buttons=document.createElement('div');buttons.className='mt-3 flex gap-2';
    const prepare=document.createElement('button');
