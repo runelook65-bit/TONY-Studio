@@ -63,7 +63,7 @@
    const h=document.createElement("div");h.className="text-[10px] uppercase tracking-wider font-bold text-zinc-500";h.textContent="Research sources returned by Claude";
    section.append(h);
    result.sources.slice(0,8).forEach(source=>{
-    if(!source||typeof source.url!=="string"||!/^https:\\/\\//.test(source.url))return;
+    if(!source||typeof source.url!=="string"||!source.url.startsWith("https://"))return;
     const a=document.createElement("a");a.href=source.url;a.target="_blank";a.rel="noopener noreferrer";
     a.className="block text-[11px] text-sky-300 underline mt-1";a.textContent=String(source.title||source.publisher||"Source");
     section.append(a);
