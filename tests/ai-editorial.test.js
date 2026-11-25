@@ -23,7 +23,7 @@ test('draft generation is limited to one highest-ranked pending story per schedu
 
 test('Claude drafts remain review-only and do not trigger publication',()=>{
   assert.match(edge,/Editor confirmation required; no posts were published/);
-  assert.match(radar,/AI research and script are editorial drafts/);
+  assert.match(radar,/AI research and script are editorial drafts/);\n  assert.match(radar,/CLAUDE DRAFT FAILED · CHECK LOGS/);
   assert.match(radar,/fact_check_checklist/);
   assert.match(radar,/navigator\.clipboard\.writeText/);
 });
