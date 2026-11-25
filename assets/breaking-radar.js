@@ -46,6 +46,7 @@
    const p=document.createElement("p");p.className="text-xs leading-relaxed text-zinc-200 whitespace-pre-wrap mt-1";p.textContent=String(value||"");
    section.append(h,p);wrap.append(section);
   };
+  addText("Graphic deck · 35–50 words",draft.card_deck);
   addText("Opening hook",draft.hook);
   addText("Voiceover script",draft.script);
   addText("Instagram caption",draft.caption);
@@ -127,7 +128,7 @@
   if(!app||!newsroom)return setStatus('Studio editor is not ready.',true);
   const t=newsroom.nyTime(story.source_published_at);
   app.applyPreset({badgeText:story.category||'NYC NEWS',badgeColor:COLORS[story.category]||'#FFC300',
-   headline:story.headline,summary:story.summary||'Details are being verified. See original source.',
+   headline:story.headline,summary:story.ai_draft?.status==='generated'&&story.ai_draft?.draft?.card_deck?story.ai_draft.draft.card_deck:(story.summary||'Details are being verified. See original source.'),
    region:story.borough||'NEW YORK CITY',dateLang:'EN'});
   app.state.dateValue=t.date;app.state.timeValue=t.time;
   app.dateInput.value=t.date;app.timeInput.value=t.time;
