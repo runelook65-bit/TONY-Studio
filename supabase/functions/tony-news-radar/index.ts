@@ -212,27 +212,18 @@ async function generateClaudeDraft(row:Record<string,unknown>){
   },
   research_instructions:"Search for the exact story and recent official or independent corroboration. Check whether the story has changed since initial publication. If no reliable corroboration exists, say so."
  };
- const messages:Array<{role:"user"|"assistant";content:string|unknown[]}>= [{role:"user",content:JSON.stringify(user)}];
  const body={
   model,max_tokens:2200,system,
   tools:[{type:"web_search_20260318",name:"web_search",max_uses:2,response_inclusion:"excluded"}],
-  messages
+  messages:[{role:"user",content:JSON.stringify(user)}]
  };
- let responseData:Record<string,unknown>|null=null;
- for(let attempt=0;attempt<3;attempt++){
-  const response=await fetch("https://api.anthropic.com/v1/messages",{
-   method:"POST",headers:{"content-type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01"},
-   body:JSON.stringify(body),signal:AbortSignal.timeout(90000)
-  });
-  responseData=await response.json() as Record<string,unknown>;
-  if(!response.ok)throw Error("Anthropic API "+response.status+": "+String((responseData as Record<string,unknown>).error||"request failed").slice(0,180));
-  if(responseData.stop_reason==="pause_turn"&&Array.isArray(responseData.content)){
-   messages.push({role:"assistant",content:responseData.content});
-   continue;
-  }
-  break;
- }
- if(!responseData||responseData.stop_reason==="pause_turn")throw Error("Claude research exceeded the allowed turn limit");
+ const response=await fetch("https://api.anthropic.com/v1/messages",{
+  method:"POST",headers:{"content-type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01"},
+  body:JSON.stringify(body),signal:AbortSignal.timeout(48000)
+ });
+ const responseData=await response.json() as Record<string,unknown>;
+ if(!response.ok)throw Error("Anthropic API "+response.status+": "+String((responseData as Record<string,unknown>).error||"request failed").slice(0,180));
+ if(responseData.stop_reason==="pause_turn")throw Error("Claude research did not finish within the scheduled worker window");
  const content=Array.isArray(responseData.content)?responseData.content as Array<Record<string,unknown>>:[];
  const text=content.filter(x=>x.type==="text").map(x=>String(x.text||"")).join("\n").trim();
  const draft=extractModelJson(text);
@@ -246,7 +237,7 @@ async function generateClaudeDraft(row:Record<string,unknown>){
 async function generateTopDraft(){
  if(!Deno.env.get("ANTHROPIC_API_KEY"))return {status:"awaiting_api_key",generated:0};
  const since=new Date(Date.now()-48*3600000).toISOString();
- const pending=await read("tony_newsroom_items?select=id,headline,summary,source_name,source_url,source_published_at,borough,category,score,source_count,supporting_sources&ai_draft=is.null&ai_generation_status=in.(pending,failed)&editorial_status=eq.new&source_published_at=gte."+encodeURIComponent(since)+"&order=score.desc,source_published_at.desc&limit=1");
+ const pending=await read("tony_newsroom_items?select=id,headline,summary,source_name,source_url,source_published_at,borough,category,score,source_count,supporting_sources&ai_draft=is.null&ai_generation_status=eq.pending&editorial_status=eq.new&source_published_at=gte."+encodeURIComponent(since)+"&order=score.desc,source_published_at.desc&limit=1");
  const row=pending?.[0];
  if(!row)return {status:"no_pending_story",generated:0};
  try{
