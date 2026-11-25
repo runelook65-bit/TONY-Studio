@@ -19,6 +19,72 @@
  function tag(text,className){
   const e=document.createElement('span');e.className=className;e.textContent=text;return e;
  }
+
+ function appendClaudeDraft(box,story){
+  const result=story.ai_draft;
+  if(!result||result.status!=="generated"||!result.draft){
+   if(story.ai_generation_status==="failed"){
+    const pending=tag("CLAUDE DRAFT FAILED · WILL RETRY","text-[10px] text-amber-300 mt-2");
+    box.append(pending);
+   }else if(story.ai_generation_status==="pending"){
+    box.append(tag("CLAUDE DRAFT QUEUED","text-[10px] text-zinc-500 mt-2"));
+   }
+   return;
+  }
+  const draft=result.draft;
+  const wrap=document.createElement("details");
+  wrap.className="mt-3 rounded-xl border border-[#FFC300]/25 bg-black/25 p-3";
+  const summary=document.createElement("summary");
+  summary.className="cursor-pointer list-none flex items-center justify-between gap-2 text-xs font-black text-[#FFC300]";
+  const label=document.createElement("span");
+  label.textContent="CLAUDE REELS DRAFT · "+String(draft.editorial_verdict||"EDITOR REVIEW").replaceAll("_"," ").toUpperCase();
+  const caret=tag("VIEW DRAFT","text-[10px] text-zinc-400");
+  summary.append(label,caret);wrap.append(summary);
+  const addText=(heading,value)=>{
+   const section=document.createElement("div");section.className="mt-3";
+   const h=document.createElement("div");h.className="text-[10px] uppercase tracking-wider font-bold text-zinc-500";h.textContent=heading;
+   const p=document.createElement("p");p.className="text-xs leading-relaxed text-zinc-200 whitespace-pre-wrap mt-1";p.textContent=String(value||"");
+   section.append(h,p);wrap.append(section);
+  };
+  addText("Opening hook",draft.hook);
+  addText("Voiceover script",draft.script);
+  addText("Instagram caption",draft.caption);
+  if(Array.isArray(draft.on_screen_text)&&draft.on_screen_text.length){
+   addText("On-screen text",draft.on_screen_text.map(x=>"• "+String(x)).join("\\n"));
+  }
+  if(Array.isArray(draft.fact_check_checklist)&&draft.fact_check_checklist.length){
+   addText("Editor fact-check checklist",draft.fact_check_checklist.map(x=>"□ "+String(x)).join("\\n"));
+  }
+  if(Array.isArray(draft.uncertainties)&&draft.uncertainties.length){
+   addText("Uncertainties / reporting gaps",draft.uncertainties.map(x=>"• "+String(x)).join("\\n"));
+  }
+  if(Array.isArray(result.sources)&&result.sources.length){
+   const section=document.createElement("div");section.className="mt-3";
+   const h=document.createElement("div");h.className="text-[10px] uppercase tracking-wider font-bold text-zinc-500";h.textContent="Research sources returned by Claude";
+   section.append(h);
+   result.sources.slice(0,8).forEach(source=>{
+    if(!source||typeof source.url!=="string"||!/^https:\\/\\//.test(source.url))return;
+    const a=document.createElement("a");a.href=source.url;a.target="_blank";a.rel="noopener noreferrer";
+    a.className="block text-[11px] text-sky-300 underline mt-1";a.textContent=String(source.title||source.publisher||"Source");
+    section.append(a);
+   });
+   wrap.append(section);
+  }
+  const note=document.createElement("p");note.className="mt-3 text-[10px] text-amber-200";
+  note.textContent="AI research and script are editorial drafts, not proof of accuracy. Verify every claim and source before approval.";
+  wrap.append(note);
+  const copy=document.createElement("button");copy.type="button";
+  copy.className="mt-3 w-full rounded-lg bg-[#FFC300] text-black font-black text-xs py-2.5";
+  copy.textContent="Copy Hook + Script + Caption";
+  copy.addEventListener("click",async()=>{
+   const text=["HOOK: "+String(draft.hook||""),"SCRIPT: "+String(draft.script||""),"CAPTION: "+String(draft.caption||"")].join("\\n\\n");
+   try{await navigator.clipboard.writeText(text);copy.textContent="Copied";setTimeout(()=>{copy.textContent="Copy Hook + Script + Caption";},1800);}
+   catch{copy.textContent="Clipboard unavailable on this browser";}
+  });
+  wrap.append(copy);
+  box.append(wrap);
+ }
+
  function show(){
   const target=$('tonyRadarStories');
   if(!target)return;
@@ -52,7 +118,7 @@
    const source=document.createElement('a');source.className='tony-radar-source';
    source.href=story.source_url;source.target='_blank';source.rel='noopener noreferrer';
    source.textContent='Read Source ↗';
-   buttons.append(prepare,source);box.append(top,headline,summary,details,buttons);target.append(box);
+   buttons.append(prepare,source);box.append(top,headline,summary,details);appendClaudeDraft(box,story);box.append(buttons);target.append(box);
   });
  }
  async function apply(story){
