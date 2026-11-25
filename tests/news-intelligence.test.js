@@ -23,7 +23,7 @@ test('corroboration is counted by distinct publisher, not raw feed items',()=>{
 });
 test('queue API returns score details and the UI displays source confidence',()=>{
  assert.match(EDGE,/score_breakdown,source_confidence/);
- assert.match(RADAR,/Source confidence /);
+ assert.match(RADAR,/Publisher trust /);
  assert.match(RADAR,/Scheduled ingestion every 3 hours/);
 });
 test('schedule migration alters the existing job instead of creating a duplicate',()=>{
