@@ -50,7 +50,7 @@
       background-color: rgba(255, 195, 0, 0.08) !important;
     }
   </style>
-  <link rel="stylesheet" href="/assets/mobile.css?v=1" />
+  <link rel="stylesheet" href="/assets/mobile.css?v=2" />
 </head>
 <body class="min-h-screen flex flex-col selection:bg-[#FFC300] selection:text-black">
 
@@ -415,6 +415,7 @@
     const state = {
       badgeText: 'NYC NEWS',
       badgeColor: '#FFC300',
+      brandTheme: 'gold',
       headline: 'Your New York story starts here',
       summary: 'Paste a verified NYC article URL or write your own report.',
       autoFitHeadline: true,
@@ -853,6 +854,7 @@
         if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
       }
       ctx.restore();
+      window.TONYBrandTheme?.paint(ctx, state, W, H);
     }
 
     // --- FORM GİRİŞLERİNİ STATE İLE EŞLEŞTİRME ---
@@ -1421,11 +1423,12 @@
     window.addEventListener('DOMContentLoaded', initApp);
   </script>
   <script src="/assets/newsroom.js" defer></script>
-  <script src="/assets/breaking-radar.js?v=3" defer></script>
+  <script src="/assets/breaking-radar.js?v=4" defer></script>
   <script src="/assets/instagram.js" defer></script>
   <script src="/assets/editor-effects.js?v=1" defer></script>
   <script src="/assets/smart-typography.js?v=1" defer></script>
   <script src="/assets/creative-suite.js?v=1" defer></script>
+  <script src="/assets/brand-theme.js?v=1" defer></script>
   <script src="/assets/carousel-studio.js?v=1" defer></script>
   <script src="/assets/carousel-media.js?v=1" defer></script>
   <script src="/assets/editorial-gate.js?v=1" defer></script>
