@@ -17,7 +17,7 @@
 1. Extend the source set with the New York Times New York-region and NY1 local-news RSS feeds.
 2. Add six transparent scoring dimensions: impact (25), recency (20), public interest (20), source support (15), visual potential (10), discussion potential (10).
 3. Keep source eligibility as a hard gate: only explicitly configured publishers with a trust weight of at least 7 enter the queue.
-4. Persist score components in `score_breakdown` and publisher trust in `source_confidence`.
+4. Persist score components in `score_breakdown` and publisher trust index in `source_confidence` (not factual verification confidence).
 5. Recalculate source-support score when distinct publishers corroborate the same event.
 6. Preserve all items as review-required; ranking is editorial prioritization, not factual certainty.
 7. Run ingestion every three hours. Browser refreshes may retrieve the existing queue more often without triggering ingestion.
