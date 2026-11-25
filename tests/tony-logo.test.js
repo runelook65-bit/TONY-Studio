@@ -8,7 +8,7 @@ const logo=read('assets/tony-logo.svg');
 const index=read('index.html');
 
 test('uploaded TONY Gotham identity is embedded in the card logo asset',()=>{
- assert.match(logo,/aria-label="TONY\. The Only New York"/);
+ assert.match(logo,/aria-label="TONY\. The Only New York logo"/);
  assert.match(logo,/data:image\/webp;base64,/);
  assert.match(logo,/viewBox="0 0 200 200"/);
 });
