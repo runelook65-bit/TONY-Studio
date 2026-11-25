@@ -363,3 +363,17 @@
  .tony-radar-panel button{touch-action:manipulation}
 }
 @media(prefers-reduced-motion:reduce){.tony-radar-panel *{scroll-behavior:auto!important}}
+
+
+/* TONY Gold / Gotham brand-theme selector */
+.tony-brand-theme{min-width:0}
+.tony-theme-live{font-size:9px;font-weight:900;letter-spacing:.12em;color:#ef1b2d;border:1px solid rgba(239,27,45,.35);border-radius:999px;padding:5px 8px;white-space:nowrap}
+.tony-theme-option{display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0;padding:12px;border:1px solid #34343b;border-radius:12px;background:#17171c;color:#e5e5e5;text-align:left;transition:border-color .15s,background .15s}
+.tony-theme-option strong{font-size:12px;font-weight:850}
+.tony-theme-option small{font-size:10px;color:#a1a1aa;line-height:1.35}
+.tony-theme-swatches{display:flex;gap:5px}
+.tony-theme-swatches i{display:block;width:17px;height:17px;border:1px solid rgba(255,255,255,.25);border-radius:50%}
+.tony-theme-option.tony-theme-selected,.tony-theme-option[aria-pressed="true"]{border-color:#ef1b2d;background:rgba(239,27,45,.09);box-shadow:inset 0 0 0 1px rgba(239,27,45,.12)}
+.tony-theme-option[data-tony-brand-theme="gold"].tony-theme-selected{border-color:#ffc300;background:rgba(255,195,0,.08);box-shadow:inset 0 0 0 1px rgba(255,195,0,.12)}
+.tony-theme-description{font-size:10px;color:#92929c;margin-top:9px}
+.tony-brand-theme button:focus-visible{outline:2px solid #ef1b2d;outline-offset:2px}
